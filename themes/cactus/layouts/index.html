@@ -6,7 +6,7 @@
     {{ end }}
     {{ if isset .Site.Params "social" }}
       <p>
-        Find me on
+
         {{ $length := (len .Site.Params.social) }}
         {{ range $index, $elem := .Site.Params.social }}
           {{ if eq $elem.name "email" }}
@@ -47,11 +47,11 @@
             </a>
           {{ end }}
           {{ if (lt (add $index 2) $length) }}
-            {{- print " , " -}}
+            {{- print "" -}}
           {{ else if (lt (add $index 1) $length) }}
-            {{- print " and " -}}
+            {{- print "" -}}
           {{ else }}
-            {{- print "." -}}
+            {{- print "" -}}
           {{ end }}
         {{ end }}
       </p>
@@ -72,7 +72,7 @@
               data-icon="ri:arrow-right-up-line">
               <symbol id="ai:ri:arrow-right-up-line">
                 <path
-                  fill="currentColor"
+                  fill="#2bbc8a"
                   d="m16.004 9.414l-8.607 8.607l-1.414-1.414L14.59 8H7.003V6h11v11h-2z"></path>
               </symbol>
               <use xlink:href="#ai:ri:arrow-right-up-line"></use>
@@ -90,7 +90,7 @@
               data-icon="ri:arrow-right-up-line">
               <symbol id="ai:ri:arrow-right-up-line">
                 <path
-                  fill="currentColor"
+                  fill="#2bbc8a"
                   d="m16.004 9.414l-8.607 8.607l-1.414-1.414L14.59 8H7.003V6h11v11h-2z"></path>
               </symbol>
               <use xlink:href="#ai:ri:arrow-right-up-line"></use>

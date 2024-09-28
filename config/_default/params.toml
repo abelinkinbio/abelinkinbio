@@ -5,7 +5,7 @@ playgroundImage = "/images/playground.jpg"
 
 # lived-in image
 livedInImage = "/images/lived-in.png"
-countries_i_visited = "Countries I Visited"
+countries_i_visited = "Lived In"
 playground = "Playground"
 colortheme = "white" # dark, light, white, or classic
 rss = true # generate rss feed. default value is false
@@ -13,7 +13,7 @@ googleAnalyticsAsync = true # use asynchronous tracking. Synchronous tracking by
 showAllPostsArchive = false # default
 
 # Home page settings
-description = "Hugo is a general-purpose website framework. Technically speaking, Hugo is a static site generator. Unlike systems that dynamically build a page with each visitor request, Hugo builds pages when you create or update your content. Since websites are viewed far more often than they are edited, Hugo is designed to provide an optimal viewing experience for your website’s end users and an ideal writing experience for website authors."
+description = "Do you ever feel like a plastic bag."
 
 mainSection = "posts" # your main section
 showAllPostsOnHomePage = false # default
@@ -30,7 +30,7 @@ show_updated = true # default
 showReadTime = true # default
 
 [comments]
-enabled = true # default
+enabled = false # default
 engine = "cactus_comments" # only disqus, utterances, and cactus_comments is supported
 [comments.utterances]
 repo = "<github_username>/<github_reponame>"
@@ -45,10 +45,16 @@ siteName = "your_cactus_comments_sitename" # see https://cactus.chat/ on how to 
 # https://fontawesome.com/icons?d=gallery&s=brands
 [[social]]
 name = "github"
-link = "https://github.com/gohugoio"
+link = "https://github.com/abelinkinbio"
+[[social]]
+name = "twitter"
+link = "https://x.com/mrlincolnlogs"
+[[social]]
+name = "spotify"
+link = "https://open.spotify.com/user/123498720?si=eoPhqJlORzCrkwTBRCopUQ"
 [[social]]
 name = "linkedin"
-link = "https://www.linkedin.com/company/github/"
+link = "https://www.linkedin.com/in/abrahamcarryl/"
 [[social]]
 name = "email"
-link = "example@example.com" # no need for "mailto:" in the head
+link = "abraham.carryl@gmail.com" # no need for "mailto:" in the head
