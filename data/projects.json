@@ -1,29 +1,34 @@
 {
   "list": [
     {
-      "name":"Hugo",
-      "url":"https://gohugo.io/",
-      "desc":"The world’s fastest framework for building websites."
+      "name":"Cloudflare One Dashboard",
+      "url":"https://developers.cloudflare.com/cloudflare-one/",
+      "desc":"Creating intuitive, progressive user experiences."
     },
     {
-      "name":"Hugo Themes",
-      "url":"https://github.com/gohugoio/hugoThemes",
-      "desc":"A curated directory of Hugo themes"
+      "name":"Cloudflare Tunnel",
+      "url":"https://github.com/cloudflare/cloudflared",
+      "desc":"Helping securely connect networks to Cloudflare."
     },
     {
-      "name":"Hugo Themes",
-      "url":"https://github.com/gohugoio/hugoThemes",
-      "desc":"A curated directory of Hugo themes"
+      "name":"Cloudflare DEX",
+      "url":"https://blog.cloudflare.com/introducing-digital-experience-monitoring",
+      "desc":"Optimizing network performance and availibility."
     },
     {
-      "name":"Hugo Themes",
-      "url":"https://github.com/gohugoio/hugoThemes",
-      "desc":"A curated directory of Hugo themes"
+      "name":"Cloudflare Browser Isolation",
+      "url":"https://www.cloudflare.com/zero-trust/products/browser-isolation/",
+      "desc":"Isolating threats from end-user devices."
     },
     {
-      "name":"Hugo Themes",
-      "url":"https://github.com/gohugoio/hugoThemes",
-      "desc":"A curated directory of Hugo themes"
+      "name":"igivecoolgifts.com",
+      "url":"https://igivecoolgifts.com/",
+      "desc":"Replacing one bug with another for Blake Band."
+    },
+    {
+      "name":"The Movie Game",
+      "url":"https://test.supabe.com/",
+      "desc":"Confirming whether or not Johnny Depp was in 21 Jump Street."
     }
   ]
 }

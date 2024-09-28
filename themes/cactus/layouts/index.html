@@ -105,7 +105,7 @@
   <section id="writing">
     <span class="h1">
       <a href="{{ .Site.Params.mainSection | absURL }}"
-        >{{ .Site.Params.mainSectionTitle | default "Writings" }}</a
+        >{{ .Site.Params.mainSectionTitle | default "Writing" }}</a
       >
     </span>
 
@@ -139,7 +139,7 @@
 
     {{ else }}
       <ul class="blog-post-list">
-        {{ $numPostsToShow := 5 }}
+        {{ $numPostsToShow := 3 }}
         {{ if isset .Site.Params "postsOnHomePage" }}
           {{ $numPostsToShow = .Site.Params.postsOnHomePage }}
         {{ end }}
