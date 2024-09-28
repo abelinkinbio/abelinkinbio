@@ -91,7 +91,7 @@
       let appliedFilters = [];
       let appliedFiltersTags = [];
 
-      
+
 
       /*
       * Show currently applied filters taxonomies inside div with class `.applied-filter-wrapper`
@@ -103,10 +103,10 @@
 
         appliedFiltersTags = [...new Set(appliedFiltersTags)];
         const existCurrenTaxonomy = appliedFiltersTags.includes(
-          `<p class="item">{{$taxonomyType | lower}}</p>`,
-        )
+          `<p class="item">{{$taxonomyType | lower | safeJS}}</p>`,
+        );
 
-        !existCurrenTaxonomy && appliedFiltersTags.unshift(`<p class="item">{{$taxonomyType | lower}}</p>`);
+        !existCurrenTaxonomy && appliedFiltersTags.unshift(`<p class="item">{{$taxonomyType | lower | safeJS}}</p>`);
 
         appliedFiltersContainer.innerHTML = appliedFiltersTags.join(" ");
       }
