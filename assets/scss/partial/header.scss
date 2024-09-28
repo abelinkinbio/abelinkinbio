@@ -51,7 +51,7 @@
         margin-right: 15px;
         color: $color-accent-1;
         &:hover{
-          color: #0aa26d;
+          color: #de882a;
         }
       }
       a:hover {
@@ -170,7 +170,7 @@
   display: flex;
   align-items: center;
   .dropdown-icon {
-    color: #2bbc8a !important;
+    color: #404041 !important;
     transition: 0.3s;
   }
 }
@@ -208,13 +208,13 @@
   .nav-dropdown-list {
     display: none;
   }
-  
+
   /* When the dropdown is active, make it visible */
   .nav-dropdown-list.active {
     display: block;
   }
   .dropdown-icon-container{
-    border: 1px solid #2bbc8a38;
+    border: 1px solid #de882a;
     cursor: pointer;
   }
   /* Rotate the dropdown icon */
@@ -222,29 +222,29 @@
     padding: 3px;
     display: block;
     transition: transform 0.3s ease;
-    color: #2bbc8a !important;
+    color: #f48120 !important;
   }
-  
+
   .dropdown-icon.rotated {
     transform: rotate(180deg);
   }
   .menu-icon svg {
     display: none;
   }
-  
+
   .menu-icon i {
     display: inline-block;
   }
-  
+
   /* If the parent has the class 'responsive', toggle icons */
   .responsive .menu-icon i {
     display: none;
   }
-  
+
   .responsive .menu-icon svg {
     display: inline-block;
   }
-  
+
 }
 
 @media (max-width: 568px) {
