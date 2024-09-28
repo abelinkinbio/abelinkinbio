@@ -1,0 +1,45 @@
+############# Navigation ##############
+
+# main menu
+[[main]]
+name = "Home"
+url = "/"
+weight = 1
+
+[[main]]
+name = "Bio"
+url = "/bio"
+weight = 2
+
+[[main]]
+name = "Writings"
+url = "/posts"
+weight = 3
+
+[[main]]
+name = "Playground"
+url = "/playground"
+weight = 4
+
+[[main]]
+name = "Lived In"
+url = "/livedin"
+weight = 5
+
+[[main]]
+parent = "Lived In"
+name = "Lisbon"
+url = "/livedin/lisbon/"
+weight = 1
+
+[[main]]
+parent = "Lived In"
+name = "D.C."
+url = "/livedin/dc/"
+weight = 2
+
+[[main]]
+parent = "Lived In"
+name = "ATX"
+url = "/livedin/atx/"
+weight = 3

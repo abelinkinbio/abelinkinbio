@@ -1,0 +1,7 @@
+[build]
+publish = "public"
+command = "hugo --gc --minify --templateMetrics --templateMetricsHints --forceSyncStatic"
+
+[build.environment]
+HUGO_VERSION = "0.124.1"
+GO_VERSION = "1.22.2"

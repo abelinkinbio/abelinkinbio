@@ -1,0 +1,59 @@
+<header id="header">
+  <a href="{{ .Site.BaseURL | relURL }}">
+    {{ if (isset .Site.Params "gravatar") }}
+      <div id="logo" style="background-image: url(https://www.gravatar.com/avatar/{{ md5 .Site.Params.gravatar }}?s=100&d=identicon)"></div>
+    {{ else if (isset .Site.Params "logo") }}
+      <div id="logo" style="background-image: url({{ .Site.Params.logo | absURL }})"></div>
+    {{ else }}
+      <div id="logo" style="background-image: url({{ "images/logo.png" | absURL }})"></div>
+    {{ end}}
+    <div id="title">
+      <h1>{{ .Site.Title }}</h1>
+    </div>
+    </a>
+    <div id="nav">
+      <ul class="nav-menu">
+        <li class="icon">
+          <a href="#" aria-label="Menu" class="menu-icon">
+            <i class="fas fa-bars fa-2x" aria-hidden="true"></i>
+            <svg fill="currentColor" class="hidden" xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 52 52" xml:space="preserve">
+              <path d="m31 25.4 13-13.1c.6-.6.6-1.5 0-2.1l-2-2.1c-.6-.6-1.5-.6-2.1 0L26.8 21.2c-.4.4-1 .4-1.4 0L12.3 8c-.6-.6-1.5-.6-2.1 0l-2.1 2.1c-.6.6-.6 1.5 0 2.1l13.1 13.1c.4.4.4 1 0 1.4L8 39.9c-.6.6-.6 1.5 0 2.1l2.1 2.1c.6.6 1.5.6 2.1 0L25.3 31c.4-.4 1-.4 1.4 0l13.1 13.1c.6.6 1.5.6 2.1 0L44 42c.6-.6.6-1.5 0-2.1L31 26.8c-.4-.4-.4-1 0-1.4"/>
+            </svg>
+          </a>
+        </li>
+        
+        {{ $menus := .Site.Menus.main }}
+        {{ $menuMap := dict }}
+      
+        {{ range $menus }}
+          <li class="nav-item">
+            <div class="dropdown-divider">
+              <a class="nav-link" href="{{ .URL }}">{{ .Name }}</a>
+    
+              <!-- Render the dropdown SVG only if the item has children -->
+              {{ if .Children }}
+              <div class="dropdown-icon-container">
+                <svg fill="currentColor" class="dropdown-icon" width="25" height="25" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M16.9 9.2c-.4-.4-1-.4-1.4 0L12 12.7 8.5 9.2c-.4-.4-1-.4-1.4 0s-.4 1 0 1.4l4.2 4.2c.2.2.4.3.7.3s.5-.1.7-.3l4.2-4.2c.4-.4.4-1 0-1.4"/>
+                </svg>
+              </div>
+              {{ end }}
+            </div>
+    
+            <!-- Render dropdown for items with children and hide by default -->
+            {{ if .Children }}
+            <ul class="nav-dropdown-list">
+              {{ range .Children }}
+                <li class="nav-dropdown-item">
+                  <a class="nav-dropdown-link" href="{{ .URL }}">{{ .Name }}</a>
+                </li>
+              {{ end }}
+            </ul>
+            {{ end }}
+          </li>
+        {{ end }}
+      </ul>
+    </div>
+    
+    
+</header>

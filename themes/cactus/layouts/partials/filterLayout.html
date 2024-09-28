@@ -1,0 +1,169 @@
+{{ $taxonomyType := index (split .RelPermalink "/") 1 }}
+{{ $taxonomy := index (split .RelPermalink "/") 2 }}
+
+
+
+<section>
+  <h1>{{ $taxonomyType | title }}</h1>
+
+  {{ $tags := slice }}
+  {{ $regularTags := site.Taxonomies.tags.ByCount }}
+  {{ $livedin_tags := .Site.Taxonomies.livedin.ByCount }}
+  {{ $playground_tags := .Site.Taxonomies.playground.ByCount }}
+  {{ $playground_posts := slice }}
+  {{ $livedin_posts := slice }}
+
+  {{ $posts := where site.RegularPages "Section" "==" "posts" }}
+
+  {{ if $taxonomy }}
+    {{ if eq $taxonomyType "livedin" }}
+      {{ $livedin_posts = where $posts ".Params.livedin" "intersect" (slice $taxonomy) }}
+    {{ else if eq $taxonomyType "playground" }}
+      {{ $playground_posts = where $posts ".Params.playground" "intersect" (slice $taxonomy) }}
+    {{ end }}
+  {{ else }}
+    {{ range $posts }}
+      {{ if reflect.IsSlice .Params.playground }}
+        {{ $playground_posts = $playground_posts | append . }}
+      {{ end }}
+
+      {{ if reflect.IsSlice .Params.livedin }}
+        {{ $livedin_posts = $livedin_posts | append . }}
+      {{ end }}
+    {{ end }}
+  {{ end }}
+
+  {{/* Conditionally show livedin or playground tags */}}
+  {{ if eq $taxonomyType "livedin" }}
+    {{ $tags = .Site.Taxonomies.livedin.ByCount }}
+    {{ $posts = $livedin_posts }}
+  {{ else if eq $taxonomyType "playground" }}
+    {{ $tags = .Site.Taxonomies.playground.ByCount }}
+    {{ $posts = $playground_posts }}
+  {{ end }}
+
+  {{ if eq $taxonomyType "livedin" }}
+    {{ partial "filterCard.html" (dict "Context" . "Posts" $posts "Tags" $tags "TaxonomyType" $taxonomyType "Title" "Location") }}
+  {{ end }}
+
+  {{ partial "filterCard.html" (dict "Context" . "Posts" $posts "Tags" $regularTags "TaxonomyType" "tags" "Title" "Tags") }}
+
+  {{/* Applied Filters */}}
+  <div class="tag-list">
+    <h2>Applied Filters</h2>
+    <div class="applied-filter-wrapper">
+      <p class="item">
+        {{ if ne $taxonomy "" }}
+          {{ $taxonomy | title }}
+        {{ else }}
+          {{ $taxonomyType | title }}
+        {{ end }}
+      </p>
+    </div>
+  </div>
+
+  {{ $filteredPosts := $posts }}
+  <ul class="blog-post-list">
+    {{ range $filteredPosts }}
+      <li class="blog-post-item">
+        <div class="blog-post-date">{{ .Date.Format "Jan 02, 2006" }}</div>
+        <div>
+          {{/* prettier-ignore-start */}}
+          <p data-tags style="display: none;" class="livedin">{{ range $i, $pol := .Params.livedin }}{{.}} {{ end }}</p>
+          <p data-tags style="display: none;" class="tags">{{ range $i, $ele := .Params.tags }}{{ . }} {{ end }}</p>
+          <p data-tags style="display: none;" class="playground">{{ range $i, $ele := .Params.playground }}{{ . }} {{ end }}</p>
+          {{/* prettier-ignore-end */}}
+
+          <a href="{{ .Permalink }}">{{ .Title }}</a>
+          <p>{{ .Params.description }}</p>
+        </div>
+      </li>
+    {{ end }}
+  </ul>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const tagLinks = document.querySelectorAll(".tags a");
+      let postItems = document.querySelectorAll(".blog-post-item");
+      const appliedFiltersContainer = document.querySelector(
+        ".applied-filter-wrapper",
+      );
+      let appliedFilters = [];
+      let appliedFiltersTags = [];
+
+      
+
+      /*
+      * Show currently applied filters taxonomies inside div with class `.applied-filter-wrapper`
+      */
+      function updateAppliedFiltersTags() {
+        appliedFilters.forEach((item) => {
+          appliedFiltersTags.push(`<p class="item">${item}</p>`);
+        });
+
+        appliedFiltersTags = [...new Set(appliedFiltersTags)];
+        const existCurrenTaxonomy = appliedFiltersTags.includes(
+          `<p class="item">{{$taxonomyType | lower}}</p>`,
+        )
+
+        !existCurrenTaxonomy && appliedFiltersTags.unshift(`<p class="item">{{$taxonomyType | lower}}</p>`);
+
+        appliedFiltersContainer.innerHTML = appliedFiltersTags.join(" ");
+      }
+
+      {{/* Attach Click Event to each filter button without the "all" filter button */}}
+      tagLinks.forEach((link) => {
+        link.addEventListener("click", function (e) {
+          e.preventDefault();
+
+          if (!link.classList.contains("clear-all-tags")) {
+            {{/* Get filter value which will be used to filter */}}
+            const selectedTag = link.getAttribute("data-taxonomy");
+
+            appliedFilters.push(selectedTag);
+            updateAppliedFiltersTags();
+
+            {{/* Get Post Taxonomy List (tags or livedin or playground) from each post based on which filter button is clicked */}}
+            const taxonomiesSelector = link.getAttribute("data-taxonomy-type");
+
+            postItems.forEach((post) => {
+              let postTags = [];
+
+              {{/* Get all taxonomies from each post and merge them to support filter by multiple taxonomy */}}
+              const postTaxonomies = post.querySelectorAll("[data-tags]");
+              postTaxonomies.forEach((item) => {
+                postTags.push(item.textContent.trimEnd().toLowerCase().split(" "));
+              })
+              postTags = postTags.flat();
+
+              {{/* Check if all selected taxonomy exist in each post. If exist show them or hide */}}
+              const allExist = appliedFilters.every((item) =>
+                postTags.includes(item),
+              );
+              if (allExist) {
+                post.style.display = "grid";
+              } else {
+                post.style.display = "none";
+              }
+            });
+          }
+        });
+      });
+
+      {{/* Keep current taxonomy like livedin or playground as filtered by default when clicking `all` filter button */}}
+      document.querySelectorAll(".clear-all-tags").forEach((link) => {
+        link.addEventListener("click", (e) => {
+          e.preventDefault();
+
+          appliedFilters = [];
+          appliedFiltersTags = [`<p class="item">{{$taxonomyType | lower}}</p>`];
+          updateAppliedFiltersTags();
+
+          postItems.forEach((post) => {
+            post.style.display = "grid";
+          });
+        });
+        })
+    });
+  </script>
+</section>

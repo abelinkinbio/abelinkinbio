@@ -1,0 +1,63 @@
+{{ $title := .Title }}
+{{ $taxonomyType := .TaxonomyType }}
+{{ $taxonomies := .Tags }}
+{{ $context := .Context }}
+{{ $currentTaxonomyType := index (split $context.RelPermalink "/") 1 }}
+{{ $regularPosts := where site.RegularPages "Section" "==" "posts" }}
+{{ $posts := .Posts }}
+{{ $postsBasedOnTags := slice }}
+
+{{ range $posts }}
+  {{ if and (eq $taxonomyType "tags") (reflect.IsSlice .Params.tags) }}
+    {{ if eq $currentTaxonomyType "livedin" }}
+      {{ $postsBasedOnTags = $postsBasedOnTags | append . }}
+      {{ $posts = $posts | append . }}
+    {{ else if eq $currentTaxonomyType "playground" }}
+      {{ $postsBasedOnTags = $postsBasedOnTags | append . }}
+      {{ $posts = $posts | append . }}
+    {{ end }}
+  {{ end }}
+{{ end }}
+
+
+<div class="tag-list tags">
+  {{ with $title }}<h2>{{ . }}</h2>{{ end }}
+
+  <div class="tag-list-wrapper">
+      <a
+        class="item clear-all-tags"
+        href="#"
+        data-taxonomy-type="{{ $taxonomyType }}">
+        All
+        {{ if eq $taxonomyType "tags" }}
+          <span>{{ len $postsBasedOnTags }}</span>
+        {{ else }}
+          <span>{{ len $posts }}</span>
+        {{ end }}
+      </a>
+
+    {{ range $taxonomies }}
+      {{ $totalPostUnderTag := "" }}
+      {{ if eq $taxonomyType "tags" }}
+        {{ $a := where $postsBasedOnTags ".Params.tags" "intersect" (slice (.Page.Title | lower)) }}
+        {{ $totalPostUnderTag = len $a }}
+      {{ else if eq $taxonomyType "livedin" }}
+        {{ $totalPostUnderTag = len (where $posts ".Params.livedin" "intersect" (slice (.Page.Title | lower))) }}
+      {{ else if eq $taxonomyType "playground" }}
+        {{ $totalPostUnderTag = len (where $posts ".Params.playground" "intersect" (slice (.Page.Title | lower))) }}
+      {{ end }}
+
+      {{ if $totalPostUnderTag }}
+        <a
+          class="item"
+          href="{{ .Page.Permalink }}"
+          data-taxonomy="{{ .Page.Title | lower }}"
+          data-taxonomy-type="{{ $taxonomyType }}">
+          {{ .Page.Title }}{{ with $totalPostUnderTag }}
+            <span>{{ . }}</span>
+          {{ end }}
+        </a>
+      {{ end }}
+    {{ end }}
+  </div>
+</div>

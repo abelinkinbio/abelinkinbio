@@ -1,0 +1,60 @@
+{{ define "main" }}
+<section>
+  <div class="">
+    <h1>All {{ .Title }}</h1>
+  </div>
+
+  {{/* Extract the taxonomy type and value from the URL */}}
+  {{ $taxonomyType := index (split .RelPermalink "/") 1 }} 
+  {{ $taxonomyValue := index (split .RelPermalink "/") 2 | default "" }} <!-- Default to empty if not present -->
+
+  {{ $.Scratch.Set "uniqueTags" (slice) }}
+  {{ $posts := where .Site.RegularPages "Section" "posts" }}
+
+  {{/* Collect unique tags from posts, filtering by taxonomy if $taxonomyValue is not empty */}}
+  {{ range $posts }}
+    {{ if or (eq $taxonomyValue "") (and (isset .Params $taxonomyType) (in (index .Params $taxonomyType) $taxonomyValue)) }}
+      {{ if .Params.tags }}
+        {{ range .Params.tags }}
+          {{ if not (in ($.Scratch.Get "uniqueTags") .) }}
+            {{ $.Scratch.Add "uniqueTags" (slice .) }}
+          {{ end }}
+        {{ end }}
+      {{ end }}
+    {{ end }}
+  {{ end }}
+
+  {{/*  <div class="tag-item">
+    <h2>Tags:</h2>
+    {{ range ($.Scratch.Get "uniqueTags") }}
+      <a href="{{ "/tags/" | relURL }}{{ . }}"> {{ . }}</a>
+    {{ end }}
+  </div>  */}}
+
+  {{/* Initialize filtered posts */}}
+  {{ $filteredPosts := slice }}
+
+  {{/* Filter posts based on the taxonomy value, or show all if no taxonomy is set */}}
+  {{ range $posts }}
+    {{ if or (eq $taxonomyValue "") (and (isset .Params $taxonomyType) (in (index .Params $taxonomyType) $taxonomyValue)) }}
+      {{ $filteredPosts = $filteredPosts | append . }}
+    {{ end }}
+  {{ end }}
+
+  <ul class="blog-post-list">
+    {{ if gt (len $filteredPosts) 0 }}
+      {{ range $filteredPosts }}
+        <li class="blog-post-item">
+          <div class="blog-post-date">{{ .Date.Format "Jan 02, 2006" }}</div>
+          <div>
+            <a href="{{ .Permalink }}">{{ .Title }}</a>
+            <p>{{ .Params.description }}</p>
+          </div>
+        </li>
+      {{ end }}
+    {{ else }}
+      <li>No posts found for {{ $taxonomyType }}: {{ $taxonomyValue }}</li>
+    {{ end }}
+  </ul>
+</section>
+{{ end }}
