@@ -103,12 +103,10 @@
 
         appliedFiltersTags = [...new Set(appliedFiltersTags)];
         const existCurrenTaxonomy = appliedFiltersTags.includes(
-          {{ printf "`<p class=\"item\">%s</p>`" ($taxonomyType | lower | safeJS) }}
+          `<p class="item">{{$taxonomyType | lower}}</p>`,
         );
 
-        if (!existCurrenTaxonomy) {
-          appliedFiltersTags.unshift({{ printf "`<p class=\"item\">%s</p>`" ($taxonomyType | lower | safeJS) }});
-        }
+        !existCurrenTaxonomy && appliedFiltersTags.unshift(`<p class="item">{{$taxonomyType | lower}}</p>`);
 
         appliedFiltersContainer.innerHTML = appliedFiltersTags.join(" ");
       }
