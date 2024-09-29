@@ -1,7 +1,7 @@
 ---
 title: "My First Mechanical Keyboard ⌨️"
 description: "Building a mechanical keyboard with zero experience and zero research"
-date: 2021-01-10
+date: 2022-01-10
 tags:
   - hacking
   - keyboard
