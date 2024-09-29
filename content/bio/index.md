@@ -1,18 +1,42 @@
 ---
-title: About me
-date: 2016-08-24 17:51:42
+title: whoami
+date: 2024-09-29
 ---
 
-Github: [monkeyWzr](https://github.com/monkeyWzr)
+```bash
+$ whoami
 
-# What is Lorem Ipsum?
-Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
+$ echo "About Me"
+My name is Abraham, but most people call me Abe.
 
-### Lorem Ipsum is simply dummy
-Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
+$ echo "Skills"
+2x Sixth Man of the Year
+Ultimate Hype Man
+All Around Glue Guy
 
-# What is Lorem Ipsum?
-Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
+$ echo "Fun Facts"
+Happy Hour Question: What are you top 1% in the world at?
+Best Job I had: Chick-fil-A
+My friends call me: All the time even though I never answer
+My family calls me: The favorite
 
-### Lorem Ipsum is simply dummy
-Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
+$ echo "Achievements"
+12 y/o dog
+
+$ echo "Weaknesses"
+My hairline
+
+$ echo "Aspirations"
+All four slams in the same season
+Run a coffee shop
+
+$ echo "Shutting Down"
+TV: Survivor, MasterChef Junior
+Movies: National Treasure, Almost Famous
+Books: Creativity Inc, Ego is the Enemy, 50 Inventions that Shaped the Modern Economy, Into the Wires
+Podcasts: How Stuff Works, Stuff You Should Know, This is How the World Ends
+
+$ echo "Contact"
+Twitter: @mrlincolnlogs
+
+$ exit
