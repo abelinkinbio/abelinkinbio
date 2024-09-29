@@ -1,5 +1,6 @@
 ---
 title: "Better Half ☕️"
+description: "Outdoor coffee shop conveniently located next to Hold Out Brewing."
 date: 2021-06-13T20:51:38-05:00
 draft: false
 tags:
@@ -8,8 +9,6 @@ livedin:
   - atx
 author: "Abe"
 ---
-
-Hip outdoor coffee house with a good crowd. Conveniently located next to Hold Out Brewing. Maybe too conveniently..
 
 #### Our personal favorites:
 

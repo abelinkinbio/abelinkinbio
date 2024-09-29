@@ -1,5 +1,6 @@
 ---
 title: "Juiceland 🥤"
+description: "Tons of locations. This will heal you."
 date: 2021-06-13T21:34:55-05:00
 draft: false
 tags:
@@ -9,8 +10,6 @@ livedin:
   - atx
 author: "Soy"
 ---
-
-Fresh juices, smoothies, and acai bowls. Many locations spaced throughout the city for a quick and easy grab, but we're a little biased towards the one on Lake Austin Blvd.
 
 #### Our personal favorites:
 

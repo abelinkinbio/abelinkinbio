@@ -1,5 +1,6 @@
 ---
 title: "Armadillo Den 🍺"
+description: "Outdoor venue with live music, food trucks, and bars. Dog friendly"
 date: 2021-06-25T16:24:18-05:00
 draft: false
 tags:
@@ -9,8 +10,6 @@ livedin:
   - atx
 author: "Soy"
 ---
-
-Outdoor venue with live music, food trucks, and bar. You can bring your furry friend and let them roam free in the off-leash park.
 
 #### Our personal favorites:
 

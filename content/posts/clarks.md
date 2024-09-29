@@ -1,5 +1,6 @@
 ---
 title: "Clark's Oyster Bar 🥃"
+description: "Close to downtown with seafood and drinks."
 date: 2021-06-14T21:31:58-05:00
 draft: true
 tags:
@@ -9,8 +10,6 @@ livedin:
   - atx
 author: "Soy"
 ---
-
-Try to sit outside. Close to downtown with fresh seafood and light cocktails. Popular with celebs.
 
 #### Our personal favorites:
 

@@ -1,5 +1,6 @@
 ---
 title: "Josephine House 🥃"
+description: "Bungalow house turned bar and restaurant."
 date: 2021-06-14T21:41:58-05:00
 draft: false
 tags:
@@ -9,8 +10,6 @@ livedin:
   - atx
 author: "Abe"
 ---
-
-Bungalow house turned cocktails bar and restaurant. Traditional menu in an Old Austin neighborhood.
 
 #### Our personal favorites:
 

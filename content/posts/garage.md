@@ -1,5 +1,6 @@
 ---
 title: "Garage 🍺"
+description: "Nice cocktail bar to start the night off"
 date: 2021-06-25T16:25:38-05:00
 draft: false
 tags:
@@ -9,8 +10,6 @@ livedin:
   - atx
 author: "Soy"
 ---
-
-Downtown speakeasy in a... parking garage. Bartenders create unique cocktails in an intimate setting.
 
 #### Our personal favorites:
 

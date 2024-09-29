@@ -1,5 +1,6 @@
 ---
 title: "Lavaca Street Bar 🌮"
+description: "Grab-and-go tacos downtown for when you need that"
 date: 2021-06-25T16:25:57-05:00
 draft: false
 tags:
@@ -8,8 +9,6 @@ livedin:
   - atx
 author: "Abe"
 ---
-
-Grab-and-go tacos inside of a sticky-floored sports bar. There are a few locations sprawled across Austin, but the downtown location is most convenient.
 
 #### Our personal favorites:
 

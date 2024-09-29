@@ -1,5 +1,6 @@
 ---
 title: "Mattie's 🦚"
+description: "Upstyled comfort food with peacocks roaming the restaurant"
 date: 2021-06-15T21:18:48-05:00
 draft: false
 tags:
@@ -8,8 +9,6 @@ livedin:
   - atx
 author: "Soy"
 ---
-
-Large southern farmhouse turned into charming southern restaurant. Try to snag a table before sunset to see the resident peacocks wander around your table.
 
 #### Our personal favorites:
 

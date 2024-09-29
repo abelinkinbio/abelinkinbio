@@ -1,5 +1,6 @@
 ---
 title: "Swedish Hill Bakery 🥐"
+description: "Good little bakery with outdoor seating if it's nice out."
 date: 2021-06-25T16:26:52-05:00
 draft: false
 tags:
@@ -8,9 +9,6 @@ livedin:
   - atx
 author: "Soy"
 ---
-
-Cozy bakery with outdoor seating. Delicious pastries and lunch options.
-
 #### Our personal favorites:
 
 1. Quiche of the Day

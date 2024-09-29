@@ -1,5 +1,6 @@
 ---
 title: "Bouldin Acres 🍺"
+description: "Beer garden with lots of TVs outside for gameday"
 date: 2021-06-25T16:24:48-05:00
 draft: false
 tags:
@@ -8,8 +9,6 @@ livedin:
   - atx
 author: "Abe"
 ---
-
-Great outdoor space to eat, drink, and play games. Watch (or play) the pickleball courts in the middle of the space.
 
 #### Our personal favorites:
 

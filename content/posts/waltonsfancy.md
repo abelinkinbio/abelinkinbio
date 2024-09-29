@@ -1,5 +1,6 @@
 ---
 title: "Walton's Fancy and Staple 🥐"
+description: "Fast casual style deli and bakery owned by Sandra Bullock. I guess that's interesting."
 date: 2021-06-15T21:18:38-05:00
 draft: false
 tags:
@@ -8,8 +9,6 @@ livedin:
   - atx
 author: "Soy"
 ---
-
-Fast casual style deli and bakery owned by Sandra Bullock. Southern staples like shrimp and grits and biscuits and gravy.
 
 #### Our personal favorites:
 

@@ -1,5 +1,6 @@
 ---
 title: "24 Diner 🍳"
+description: "Serves breakfast, lunch, dinner all day every day."
 date: 2021-06-15T21:19:59-05:00
 draft: false
 tags:
@@ -8,8 +9,6 @@ livedin:
   - atx
 author: "Abe"
 ---
-
-Our version of Waffle House. Serves breakfast, lunch, beer, cocktails, and milkshakes all day every day.
 
 #### Our personal favorites:
 

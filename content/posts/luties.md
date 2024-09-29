@@ -1,5 +1,6 @@
 ---
 title: "Lutie’s Garden Restaurant 🥃"
+description: "Inside the Commodore Perry Estate. Cool vibes."
 date: 2021-06-14T21:39:38-05:00
 draft: false
 tags:
@@ -9,8 +10,6 @@ livedin:
   - atx
 author: "Soy"
 ---
-
-New in town. Located in the famous Commodore Perry Estate and surrounded by a pleasant Victorian garden.
 
 #### Our personal favorites:
 

@@ -1,5 +1,6 @@
 ---
 title: "Homeslice 🍕"
+description: "Pizza by the slice that's actually good"
 date: 2021-06-15T21:19:16-05:00
 draft: false
 tags:
@@ -8,8 +9,6 @@ livedin:
   - atx
 author: "Soy"
 ---
-
-Pizza by the slice that you can actually eat sober. NY style pizza on S Congress.
 
 #### Our personal favorites:
 

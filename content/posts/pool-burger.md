@@ -1,5 +1,6 @@
 ---
 title: "Pool Burger 🍹"
+description: "The vibes are immaculate. Little locals only tiki bar with good drinks, burgers, and ice cream."
 date: 2021-06-25T16:26:27-05:00
 draft: false
 tags: ["happy-hour"]
@@ -10,8 +11,6 @@ livedin:
   - atx
 author: "Abe"
 ---
-
-West Austin local tiki bar. Nothing fancy here, just good drinks, good people, and in a semi-tropical backdrop.
 
 #### Our personal favorites:
 

@@ -1,5 +1,6 @@
 ---
 title: "Mozart's Coffee Roasters ☕️"
+description: "Rumor has it that 100% of all startups have their first meeting here."
 date: 2021-06-13T18:14:14-05:00
 draft: false
 tags:
@@ -9,8 +10,6 @@ livedin:
   - atx
 author: "Abe"
 ---
-
-Local favorite. The *rumor* is that 100% of all startups have their first meeting here. Great place to work on a Friday morning when you first get in town overlooking the start Lake Austin. Live music if you're lucky.
 
 #### Our personal favorites:
 

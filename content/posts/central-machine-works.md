@@ -1,5 +1,6 @@
 ---
 title: "Central Machine Works 🍺"
+description: "Beer garden that will usually have food trucks and live music"
 date: 2021-06-25T16:25:14-05:00
 draft: false
 tags:
@@ -9,8 +10,6 @@ livedin:
   - atx
 author: "Abe"
 ---
-
-Large beer hall with an outdoor space as well. Converted factory into a microbrewery and live music on the weekends.
 
 #### Our personal favorites:
 

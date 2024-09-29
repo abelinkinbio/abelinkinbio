@@ -1,5 +1,6 @@
 ---
 title: "Alta's Cafe ☕️"
+description: "Nice view of Town Lake to start your morning"
 date: 2021-06-13T20:51:30-05:00
 draft: false
 tags:
@@ -8,8 +9,6 @@ livedin:
   - atx
 author: "Soy"
 ---
-
-A fresh view of Town Lake. If you make it early you can watch the local crew teams practice.
 
 #### Our personal favorites:
 

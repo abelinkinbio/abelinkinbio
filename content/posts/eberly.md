@@ -1,5 +1,6 @@
 ---
 title: "Eberly 🥃"
+description: "The whole bar was shipped  piece by piece from NYC subway."
 date: 2021-06-14T21:39:03-05:00
 draft: false
 tags:
@@ -10,8 +11,6 @@ livedin:
   - atx
 author: "Abe"
 ---
-
-Brought to you by way of New York, literally. The whole bar was shipped here piece by piece. Try to get a table in the reading room.
 
 #### Our personal favorites:
 

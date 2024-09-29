@@ -1,5 +1,6 @@
 ---
 title: "Veracruz 🌮"
+description: "Go to the Line Hotel at hit Veracruz for lunch, P6 for dinner, or Alfred's for coffee. Or get a pool pass and do all three."
 date: 2021-06-25T16:27:18-05:00
 draft: false
 tags:
@@ -9,8 +10,6 @@ livedin:
   - atx
 author: "Soy"
 ---
-
-Inside the Line Hotel. Eat poolside with a day-pass or grab-and-go with their side window off Congress. City taco vibes.
 
 #### Our personal favorites:
 

@@ -1,6 +1,6 @@
 ---
 title: "My First Mechanical Keyboard ⌨️"
-description: "Lorem ipsum dolor sit, amet consectetur adipisicing elit. Provident, odit earum maxime dicta cupiditate omnis magnam ea at nobis dolorem. Lorem ipsum dolor sit amet consectetur adipisicing elit. Inventore aliquam nulla fuga delectus. Incidunt eveniet nesciunt dolor? Consequatur, error pariatur."
+description: "Building a mechanical keyboard with zero experience and zero research"
 date: 2021-01-10
 tags:
   - hacking

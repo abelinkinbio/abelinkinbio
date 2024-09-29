@@ -1,5 +1,6 @@
 ---
 title: "Cosmic Coffee 🍺"
+description: "Equal parts coffee house, beer garden, and food truck park."
 date: 2021-06-13T20:46:00-05:00
 draft: false
 tags:
@@ -8,9 +9,6 @@ livedin:
   - atx
 author: "Abe"
 ---
-
-Equal parts coffee house, beer garden, and food truck park. No reservation required.
-
 
 #### Our personal favorites:
 
