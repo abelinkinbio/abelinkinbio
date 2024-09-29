@@ -60,7 +60,7 @@ body {
     background: none;
 
     &:hover {
-      color: $color-link;
+      color: white;
     }
   }
   h1 a,
@@ -258,10 +258,10 @@ code {
 
   .item {
     margin: 0px;
-    border: 1px solid #2bbc8946;
+    border: 1px solid #de882a;
     padding: 2px 5px;
     border-radius: 6px;
-    color: #de882a;
+    color: #404041;
     transition: 0.3s;
     display: flex;
     align-items: center;
