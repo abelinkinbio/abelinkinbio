@@ -1,6 +1,6 @@
 ---
 title: "Cosmic Coffee 🍺"
-description: "Equal parts coffee house, beer garden, and food truck park."
+description: "Equal parts coffee house, beer garden, and food trucks."
 date: 2021-06-13T20:46:00-05:00
 draft: false
 tags:

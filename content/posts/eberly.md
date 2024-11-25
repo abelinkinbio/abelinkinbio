@@ -1,12 +1,11 @@
 ---
 title: "Eberly 🥃"
-description: "The whole bar was shipped  piece by piece from NYC subway."
+description: "Great for groups"
 date: 2021-06-14T21:39:03-05:00
 draft: false
 tags:
   - drinks
-  - farm-to-table
-  - top-10
+  - south
 livedin:
   - atx
 author: "Abe"

@@ -4,7 +4,7 @@ description: "Local neighborhood steakhouse for date-night. Popcorn is free."
 date: 2021-06-15T21:18:14-05:00
 draft: false
 tags:
-  - date-night
+  - date-nite
   - west
 livedin:
   - atx

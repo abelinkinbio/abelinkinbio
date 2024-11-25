@@ -1,6 +1,6 @@
 ---
 title: "Central Machine Works 🍺"
-description: "Beer garden that will usually have food trucks and live music"
+description: "Beer garden to start the day in East"
 date: 2021-06-25T16:25:14-05:00
 draft: false
 tags:

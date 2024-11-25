@@ -1,12 +1,13 @@
 ---
 title: "Pool Burger 🍹"
-description: "The vibes are immaculate. Little locals only tiki bar with good drinks, burgers, and ice cream."
+description: "Tiki bar with drinks and burgers"
 date: 2021-06-25T16:26:27-05:00
 draft: false
 tags: ["happy-hour"]
 tags:
   - drinks
   - happy-hour
+  - top-10
 livedin:
   - atx
 author: "Abe"

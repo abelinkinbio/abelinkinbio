@@ -1,6 +1,6 @@
 ---
 title: "Mattie's 🦚"
-description: "Upstyled comfort food with peacocks roaming the restaurant"
+description: "Upstyled comfort food"
 date: 2021-06-15T21:18:48-05:00
 draft: false
 tags:

@@ -5,7 +5,7 @@ date: 2021-06-25T16:25:38-05:00
 draft: false
 tags:
   - drinks
-  - after-hours
+  - downtown
 livedin:
   - atx
 author: "Soy"

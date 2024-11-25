@@ -1,6 +1,6 @@
 ---
 title: "Veracruz 🌮"
-description: "Go to the Line Hotel at hit Veracruz for lunch, P6 for dinner, or Alfred's for coffee. Or get a pool pass and do all three."
+description: "Stay at the Line Hotel"
 date: 2021-06-25T16:27:18-05:00
 draft: false
 tags:

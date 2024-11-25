@@ -1,6 +1,6 @@
 ---
 title: "Homeslice 🍕"
-description: "Pizza by the slice that's actually good"
+description: "Pizza by the slice"
 date: 2021-06-15T21:19:16-05:00
 draft: false
 tags:

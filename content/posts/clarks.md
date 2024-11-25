@@ -1,6 +1,6 @@
 ---
 title: "Clark's Oyster Bar 🥃"
-description: "Close to downtown with seafood and drinks."
+description: "Close to downtown to start the afternoon"
 date: 2021-06-14T21:31:58-05:00
 draft: true
 tags:

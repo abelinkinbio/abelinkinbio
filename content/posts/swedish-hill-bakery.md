@@ -1,6 +1,6 @@
 ---
 title: "Swedish Hill Bakery 🥐"
-description: "Good little bakery with outdoor seating if it's nice out."
+description: "Good little coffee joint for Saturday morning"
 date: 2021-06-25T16:26:52-05:00
 draft: false
 tags:

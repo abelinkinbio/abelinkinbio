@@ -1,6 +1,6 @@
 ---
 title: "Josephine House 🥃"
-description: "Bungalow house turned bar and restaurant."
+description: "Bungalow restaurant and bar in west."
 date: 2021-06-14T21:41:58-05:00
 draft: false
 tags:
