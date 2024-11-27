@@ -1,6 +1,6 @@
 ---
 title: "Eberly 🥃"
-description: "Great for groups"
+description: "Cool and easy spot for last minute reservations for dinner or drinks"
 date: 2021-06-14T21:39:03-05:00
 draft: false
 tags:

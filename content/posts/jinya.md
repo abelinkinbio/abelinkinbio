@@ -1,12 +1,13 @@
 ---
 title: "Jinya 🍜"
-description: "Placeholder text for now"
+description: "Solid ramen that delivers well too"
 date: 2021-06-13T20:51:38-05:00
 draft: false
 tags:
   - ramen
+  - delivery
 livedin:
-  - atx
+  - dc
 author: "Abe"
 ---
 

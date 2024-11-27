@@ -1,11 +1,12 @@
 ---
 title: "Imprensa 🥃"
-description: "Placeholder text for now"
+description: "Favorite bar in lisbon"
 date: 2021-06-13T20:51:38-05:00
 draft: false
 tags:
   - drinks
   - late-nite
+  - top-10
 livedin:
   - lisbon
 author: "Abe"

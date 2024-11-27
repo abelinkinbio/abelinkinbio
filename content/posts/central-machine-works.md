@@ -5,6 +5,7 @@ date: 2021-06-25T16:25:14-05:00
 draft: false
 tags:
   - beer
+  - east
   - top-10
 livedin:
   - atx

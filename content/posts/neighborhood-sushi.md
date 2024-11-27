@@ -6,7 +6,7 @@ draft: false
 tags:
   - sushi
   - date-nite
-  - downtown
+  - south
 livedin:
   - atx
 author: "Abe"

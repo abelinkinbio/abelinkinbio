@@ -6,6 +6,7 @@ draft: false
 tags:
   - coffee
   - brunch
+  - east
 livedin:
   - atx
 author: "Abe"

@@ -1,10 +1,10 @@
 ---
-title: "Better Half ☕️"
+title: "Cafe São Bento 🍽️"
 description: "Traditional Portuguese dining experience"
 date: 2021-06-13T20:51:38-05:00
 draft: false
 tags:
-  - Portuguese
+  - portuguese
   - são-bento
   - top-10
 livedin:

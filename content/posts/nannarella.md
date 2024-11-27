@@ -1,10 +1,12 @@
 ---
 title: "Nannarella 🍦"
-description: "Best gelato spot in lisbon"
+description: "Skip dessert and grab gelato instead"
 date: 2021-06-13T20:51:38-05:00
 draft: false
 tags:
   - gelato
+  - top-10
+  - delivery
 livedin:
   - lisbon
 author: "Abe"

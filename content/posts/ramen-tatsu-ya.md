@@ -1,6 +1,6 @@
 ---
 title: "Ramen Tatsu-ya 🍜"
-description: "Take a break midweek"
+description: "Take a long work lunch"
 date: 2021-06-15T21:19:59-05:00
 draft: false
 tags:

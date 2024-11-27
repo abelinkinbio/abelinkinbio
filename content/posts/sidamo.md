@@ -1,10 +1,11 @@
 ---
 title: "Sidamo ☕️"
-description: "Placeholder text for now"
+description: "Oldie but goodie"
 date: 2021-06-13T20:51:38-05:00
 draft: false
 tags:
   - coffee
+  - h-street
 livedin:
   - dc
 author: "Abe"

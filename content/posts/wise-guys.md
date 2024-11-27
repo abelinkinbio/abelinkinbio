@@ -1,10 +1,11 @@
 ---
 title: "Wise Guy's 🍕"
-description: "Placeholder text for now"
+description: "Late-nite pizza by the slice"
 date: 2021-06-13T20:51:38-05:00
 draft: false
 tags:
   - pizza
+  - late-nite
 livedin:
   - dc
 author: "Abe"

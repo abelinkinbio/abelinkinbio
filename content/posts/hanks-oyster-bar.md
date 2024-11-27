@@ -1,11 +1,13 @@
 ---
 title: "Hank's Oyster Bar 🦪"
-description: "Placeholder text for now"
+description: "Happy hour with good apps and sides"
 date: 2021-06-13T20:51:38-05:00
 draft: false
 tags:
   - drinks
   - happy-hour
+  - u-street
+  - top-10
 livedin:
   - dc
 author: "Abe"

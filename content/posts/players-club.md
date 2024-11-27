@@ -1,12 +1,11 @@
 ---
-title: "Chaplin's 🍜"
-description: "Japanese spot with great ramen and drinks"
+title: "Players Club 🕹️"
+description: "Barcade with a basement, rooftop, and window for Shake Shack delivery"
 date: 2021-06-13T20:51:38-05:00
 draft: false
 tags:
-  - ramen
   - drinks
-  - northwest
+  - logan-circle
   - top-10
 livedin:
   - dc

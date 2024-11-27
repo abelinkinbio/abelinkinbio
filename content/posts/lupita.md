@@ -1,14 +1,14 @@
 ---
-title: "Homeslice 🍕"
+title: "Lupita 🍕"
 description: "Pizza by the slice"
 date: 2021-06-15T21:19:16-05:00
 draft: false
 tags:
   - pizza
-  - south
   - delivery
+  - top-10
 livedin:
-  - atx
+  - lisbon
 author: "Soy"
 ---
 

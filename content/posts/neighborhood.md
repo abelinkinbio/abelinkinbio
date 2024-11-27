@@ -1,10 +1,12 @@
 ---
 title: "Neighborhood 🍔"
-description: "Best late nite eat in lisbon"
+description: "Burgers and beers on your way home for the night"
 date: 2021-06-13T20:51:38-05:00
 draft: false
 tags:
   - late-nite
+  - american
+  - delivery
 livedin:
   - lisbon
 author: "Abe"

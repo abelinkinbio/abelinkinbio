@@ -1,10 +1,10 @@
 ---
-title: "Da Noi 🍱"
+title: "Doi Moi 🍱"
 description: "Great food, drinks, and bars next door"
 date: 2021-06-13T20:51:38-05:00
 draft: false
 tags:
-  - coffee
+  - asian
   - u-street
 livedin:
   - dc

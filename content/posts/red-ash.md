@@ -1,6 +1,6 @@
 ---
 title: "Red Ash 🍝"
-description: "Great for a group"
+description: "Walking distance to downtown bars"
 date: 2021-06-15T21:19:59-05:00
 draft: false
 tags:

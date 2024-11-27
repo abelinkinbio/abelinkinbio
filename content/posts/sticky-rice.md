@@ -1,10 +1,11 @@
 ---
 title: "Sticky Rice 🍱"
-description: "Placeholder text for now"
+description: "They serve a bucket of tots. A bucket."
 date: 2021-06-13T20:51:38-05:00
 draft: false
 tags:
   - sushi
+  - h-street
 livedin:
   - dc
 author: "Abe"

@@ -1,10 +1,11 @@
 ---
-title: "Rocco's 🍝"
-description: "Placeholder text for now"
+title: "Rocco 🍝"
+description: "On all the tourist-y lists but still holds up"
 date: 2021-06-13T20:51:38-05:00
 draft: false
 tags:
   - italian
+  - chiado
 livedin:
   - lisbon
 author: "Abe"

@@ -7,6 +7,7 @@ tags: ["happy-hour"]
 tags:
   - drinks
   - happy-hour
+  - west
   - top-10
 livedin:
   - atx

@@ -6,6 +6,7 @@ draft: false
 tags:
   - coffee
   - drinks
+  - downtown
 livedin:
   - atx
 author: "Abe"

@@ -6,6 +6,7 @@ draft: true
 tags:
   - drinks
   - top-10
+  - downtown
 livedin:
   - atx
 author: "Soy"

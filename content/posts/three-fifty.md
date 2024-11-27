@@ -1,12 +1,11 @@
 ---
-title: "Chaplin's 🍜"
-description: "Japanese spot with great ramen and drinks"
+title: "Three Fifty ☕️"
+description: "Outdoor coffee shop to work remote for the day"
 date: 2021-06-13T20:51:38-05:00
 draft: false
 tags:
-  - ramen
-  - drinks
-  - northwest
+  - coffee
+  - u-street
   - top-10
 livedin:
   - dc

@@ -1,11 +1,12 @@
 ---
 title: "Tricky's 🥃"
-description: "Placeholder text for now"
+description: "Only accepts local currency but worth planning ahead"
 date: 2021-06-13T20:51:38-05:00
 draft: false
 tags:
   - drinks
   - date-nite
+  - top-10
 livedin:
   - lisbon
 author: "Abe"
