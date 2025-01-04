@@ -16,8 +16,8 @@ author: "Abe"
 
 #### Our personal favorites:
 
-1. Thai Iced Coffee
-2. Chicken Biscuit
-3. CFT
+1. Steak Tartar
+2. Tiger Prawn Papardelle
+3. Hazelnut Bar
 
-[Menu](https://www.betterhalfbar.com/menu) 📖  |  [Location](https://g.page/betterhalfbar?share) 🌎
+[Menu](https://www.danoilisboa.com/reservations) 📖  |  [Location](https://g.page/betterhalfbar?share) 🌎

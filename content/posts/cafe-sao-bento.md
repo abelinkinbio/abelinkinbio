@@ -14,8 +14,8 @@ author: "Abe"
 
 #### Our personal favorites:
 
-1. Thai Iced Coffee
-2. Chicken Biscuit
-3. CFT
+1. Traditional Cafe de Sao Bento Steak
+2. Batatas Fritas
+3. Prawns Al Ajillo
 
-[Menu](https://www.betterhalfbar.com/menu) 📖  |  [Location](https://g.page/betterhalfbar?share) 🌎
+[Menu](https://cafesaobento.com/wp-content/uploads/2024/10/CSB_MenuPrincipal_SITE.pdf) 📖  |  [Location](https://g.page/betterhalfbar?share) 🌎

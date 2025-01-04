@@ -14,8 +14,8 @@ author: "Abe"
 
 #### Our personal favorites:
 
-1. Thai Iced Coffee
-2. Chicken Biscuit
-3. CFT
+1. B.E.C. (Add Chili flake and Avocado)
+2. Smoked Salmon
+3. Flat White + Miso Chocolate Chip Cookie
 
-[Menu](https://www.betterhalfbar.com/menu) 📖  |  [Location](https://g.page/betterhalfbar?share) 🌎
+[Menu](https://www.rhodobagels.com/) 📖  |  [Location](https://g.page/betterhalfbar?share) 🌎

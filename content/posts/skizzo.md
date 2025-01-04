@@ -1,11 +1,13 @@
 ---
-title: "Buna ☕️"
-description: "Local neighborhood coffee shop"
-date: 2021-06-13T20:51:38-05:00
+title: "Skizzo 🍷"
+description: "Go-to neighborhood date-nite spot"
+date: 2025-01-04
 draft: false
 tags:
-  - coffee
-  - são-bento
+  - late-nite
+  - date-nite
+  - drinks
+  - lapa
   - top-10
 livedin:
   - lisbon
@@ -14,8 +16,8 @@ author: "Abe"
 
 #### Our personal favorites:
 
-1. Flat White
-2. Any Focaccia
-3. Pistachio Croissant
+1. Flat Bread Pesto
+2. Lobster "A Guillo"
+3. Wood Roasted Gnocchi
 
 [Menu](https://www.betterhalfbar.com/menu) 📖  |  [Location](https://g.page/betterhalfbar?share) 🌎

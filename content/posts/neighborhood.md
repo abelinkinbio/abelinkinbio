@@ -14,8 +14,8 @@ author: "Abe"
 
 #### Our personal favorites:
 
-1. Thai Iced Coffee
-2. Chicken Biscuit
-3. CFT
+1. Breakfast Burritos
+2. Flat White
+3. Smash Burger (only available late nite)
 
-[Menu](https://www.betterhalfbar.com/menu) 📖  |  [Location](https://g.page/betterhalfbar?share) 🌎
+[Menu](https://www.neighbourhoodlisbon.com/menu) 📖  |  [Location](https://g.page/betterhalfbar?share) 🌎

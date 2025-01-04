@@ -13,8 +13,8 @@ author: "Abe"
 
 #### Our personal favorites:
 
-1. Thai Iced Coffee
-2. Chicken Biscuit
-3. CFT
+1. Tagliatelle with Mushrooms and Truffle
+2. Scarlet Prawn Risotto
+3. Mushroom Risotto
 
-[Menu](https://www.betterhalfbar.com/menu) 📖  |  [Location](https://g.page/betterhalfbar?share) 🌎
+[Menu](https://www.rocco.pt/en/menu-ristorante) 📖  |  [Location](https://g.page/betterhalfbar?share) 🌎

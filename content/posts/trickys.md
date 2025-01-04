@@ -14,8 +14,8 @@ author: "Abe"
 
 #### Our personal favorites:
 
-1. Thai Iced Coffee
-2. Chicken Biscuit
-3. CFT
+1. Smoked and Roasted Beetroots
+2. Grilled Algarve Octopus
+3. Tuna Leche de Tigre
 
-[Menu](https://www.betterhalfbar.com/menu) 📖  |  [Location](https://g.page/betterhalfbar?share) 🌎
+[Menu](https://www.cometotrickys.com/) 📖  |  [Location](https://g.page/betterhalfbar?share) 🌎

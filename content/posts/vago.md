@@ -14,8 +14,6 @@ author: "Abe"
 
 #### Our personal favorites:
 
-1. Thai Iced Coffee
-2. Chicken Biscuit
-3. CFT
+1. Whatever
 
-[Menu](https://www.betterhalfbar.com/menu) 📖  |  [Location](https://g.page/betterhalfbar?share) 🌎
+[Menu](https://www.instagram.com/vago.lisboa/?hl=en) 📖  |  [Location](https://g.page/betterhalfbar?share) 🌎

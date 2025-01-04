@@ -13,8 +13,8 @@ author: "Abe"
 
 #### Our personal favorites:
 
-1. Thai Iced Coffee
-2. Chicken Biscuit
-3. CFT
+1. Negroni
+2. Popcorn
+3. Whatever
 
-[Menu](https://www.betterhalfbar.com/menu) 📖  |  [Location](https://g.page/betterhalfbar?share) 🌎
+[Menu](https://barprocopio.com/pt/bebidas-e-comidas) 📖  |  [Location](https://g.page/betterhalfbar?share) 🌎

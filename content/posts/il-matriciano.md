@@ -14,8 +14,8 @@ author: "Abe"
 
 #### Our personal favorites:
 
-1. Thai Iced Coffee
-2. Chicken Biscuit
-3. CFT
+1. Cacio e Pepe
+2. Pasta Matriciano
+3. Carbonara
 
-[Menu](https://www.betterhalfbar.com/menu) 📖  |  [Location](https://g.page/betterhalfbar?share) 🌎
+[Menu](https://www.instagram.com/ilmatricianolisbona/?hl=en) 📖  |  [Location](https://g.page/betterhalfbar?share) 🌎
