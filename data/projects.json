@@ -1,32 +1,17 @@
 {
   "list": [
     {
-      "name":"Cloudflare One Dashboard",
-      "url":"https://developers.cloudflare.com/cloudflare-one/",
-      "desc":"Creating intuitive, progressive user experiences."
+      "name":"Emoji Wrapped 🎧",
+      "url":"https://github.com/abelinkinbio/Emoji-Wrapped",
+      "desc":"Year in review tool because Apple would never."
     },
     {
-      "name":"Cloudflare Tunnel",
-      "url":"https://github.com/cloudflare/cloudflared",
-      "desc":"Helping securely connect networks to Cloudflare."
-    },
-    {
-      "name":"Cloudflare DEX",
-      "url":"https://blog.cloudflare.com/introducing-digital-experience-monitoring",
-      "desc":"Optimizing network performance and availibility."
-    },
-    {
-      "name":"Cloudflare Browser Isolation",
-      "url":"https://www.cloudflare.com/zero-trust/products/browser-isolation/",
-      "desc":"Isolating threats from end-user devices."
-    },
-    {
-      "name":"igivecoolgifts.com",
+      "name":"igivecoolgifts.com 🎁",
       "url":"https://igivecoolgifts.com/",
       "desc":"Replacing one bug with another for Blake Band."
     },
     {
-      "name":"The Movie Game",
+      "name":"The Movie Game 🎬",
       "url":"https://test.supabe.com/",
       "desc":"Confirming whether or not Johnny Depp was in 21 Jump Street."
     }
