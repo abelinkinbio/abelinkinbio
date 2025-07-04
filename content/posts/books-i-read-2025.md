@@ -13,10 +13,13 @@ draft: false
 
 - *Ego is the Enemy* by Ryan Holiday
 - *The Inner Game of Tennis* by W. Timothy Gallwey
+- *The Psychology of Money* by Morgan Housel
+- *Hidden Potential* by Adam Grant
 
 # 2024
 
 - *Dune* by Frank Herbert
+- *Playing to Win* by Alan G. Lafley
 
 # 2023
 
