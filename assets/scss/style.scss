@@ -364,6 +364,10 @@ code {
       img {
         transform: scale(1.1);
       }
+      #globe > svg {
+        transform: scale(1.1);
+        transition: transform 0.5s ease;
+      }
       svg {
         color: #de882a !important;
         transform: translate(7px, -7px);
