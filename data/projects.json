@@ -1,6 +1,11 @@
 {
   "list": [
     {
+      "name":"Bosworth 🤠",
+      "url":"https://github.com/abelinkinbio/spotify-sorter",
+      "desc":"Spotify API wrapper to easily organize your playlists."
+    },
+    {
       "name":"Emoji Wrapped 🎧",
       "url":"https://github.com/abelinkinbio/Emoji-Wrapped",
       "desc":"Year in review tool because Apple would never."
