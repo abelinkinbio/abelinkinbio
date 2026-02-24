@@ -1,0 +1,60 @@
+---
+// ─────────────────────────────────────────────────────────────
+// BaseLayout.astro — wraps every page.
+// No dark mode. Blue dot grid. Black accents.
+// ─────────────────────────────────────────────────────────────
+
+interface Props {
+  title: string;
+  description?: string;
+  activeNav?: string;
+}
+
+const { title, description = "Do you ever feel like a plastic bag.", activeNav } = Astro.props;
+const year = new Date().getFullYear();
+---
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content={description} />
+  <title>{title} | @abelinkinbio</title>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&family=JetBrains+Mono:wght@300;400;500;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet" />
+  <style is:global>
+    @import '../styles/blueprint.css';
+  </style>
+</head>
+
+<body class="bg-dot">
+  <div class="site-container">
+
+    <header class="site-header">
+      <div class="site-header-inner">
+        <a href="/" class="logo">@abelinkinbio</a>
+        <nav class="nav">
+          <a href="/" class:list={[{ active: activeNav === 'home' }]}>Home</a>
+          <a href="/bio" class:list={[{ active: activeNav === 'bio' }]}>Bio</a>
+          <a href="/playground" class:list={[{ active: activeNav === 'playground' }]}>Playground</a>
+          <a href="/blog" class:list={[{ active: activeNav === 'blog' }]}>Field Notes</a>
+          <a href="/livedin" class:list={[{ active: activeNav === 'livedin' }]}>City Guides</a>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <slot />
+    </main>
+
+    <footer class="site-footer">
+      <span class="annotation">© {year} abelinkinbio</span>
+      <span class="annotation">v3.0.0 · astro + workers</span>
+    </footer>
+
+  </div>
+</body>
+</html>

@@ -1,0 +1,27 @@
+---
+// ─────────────────────────────────────────────────────────────
+// Bio page — static markdown, you write this yourself.
+// The layout just wraps it in the Blueprint aesthetic.
+// ─────────────────────────────────────────────────────────────
+
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="Bio" activeNav="bio">
+  <section class="panel">
+    <span class="panel-label">bio</span>
+    <div class="post-content">
+      <h1 style="margin-bottom: var(--space-lg);">Bio</h1>
+      <p>
+        This is where you tell your story. Edit this file at
+        <code>src/pages/bio.astro</code> — or, if you'd prefer to write
+        it in markdown, create <code>src/content/bio.md</code> and we can
+        render it here instead.
+      </p>
+      <p>
+        The layout is intentionally simple — just prose in a panel.
+        Add sections, links, whatever feels right.
+      </p>
+    </div>
+  </section>
+</BaseLayout>

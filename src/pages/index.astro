@@ -1,0 +1,128 @@
+---
+// ─────────────────────────────────────────────────────────────
+// Home page — v5
+//
+// Terminal hero → Pinned playground cards → Writing + Globe
+// side-by-side → Bad Ideas (physics collapse)
+// ─────────────────────────────────────────────────────────────
+
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Globe from '../components/Globe.astro';
+import BadIdeas from '../components/BadIdeas.astro';
+import { getCollection } from 'astro:content';
+
+// Get pinned playground projects (max 2)
+const allProjects = await getCollection('playground', ({ data }) => !data.draft);
+const pinnedProjects = allProjects
+  .filter(p => p.data.pinned)
+  .sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
+  .slice(0, 2);
+
+// Get recent blog posts (max 4)
+const allPosts = await getCollection('blog', ({ data }) => !data.draft);
+const recentPosts = allPosts
+  .sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
+  .slice(0, 4);
+
+// Format date helper
+function formatDate(date: Date): string {
+  return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+}
+
+// Status tag color
+const statusColors: Record<string, string> = {
+  active: 'tag-blue',
+  investing: 'tag-black',
+  shipped: 'tag-blue',
+  killed: 'tag-black',
+};
+---
+
+<BaseLayout title="Home" activeNav="home">
+
+  <!-- ═══ TERMINAL HERO ═══════════════════════════════════════ -->
+  <section class="panel section">
+    <span class="panel-label">terminal</span>
+    <div style="padding: var(--space-sm) 0;">
+      <p style="margin-bottom: var(--space-sm); color: var(--color-muted); font-size: 0.75rem;">
+        <span class="terminal-prompt">$</span> cat welcome.txt
+      </p>
+      <h1 style="margin-bottom: var(--space-md);">Hi.</h1>
+      <p style="max-width: 55ch; color: var(--color-muted); font-size: 0.8rem; margin-bottom: 0;">
+        Do you ever feel like a plastic bag.
+      </p>
+    </div>
+  </section>
+
+  <!-- ═══ PLAYGROUND — pinned projects ════════════════════════ -->
+  <section class="section">
+    <div class="section-header">
+      <h2>Playground</h2>
+      <a href="/playground" class="label" style="text-decoration: none;">View all →</a>
+    </div>
+    <div class="grid-2">
+      {pinnedProjects.map((project) => (
+        <div class="card">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-sm);">
+            <span class="card-title">{project.data.title}</span>
+            <div style="display: flex; align-items: center; gap: 6px;">
+              <span class="pin-icon" title="Pinned">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M12 17v5"/><path d="M9 10.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24V16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V7a1 1 0 0 1 1-1 2 2 0 0 0 0-4H8a2 2 0 0 0 0 4 1 1 0 0 1 1 1z"/>
+                </svg>
+              </span>
+              <span class={`tag ${statusColors[project.data.status]}`}>{project.data.status}</span>
+            </div>
+          </div>
+          <p class="card-description" style="margin-bottom: 0;">{project.data.description}</p>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <!-- ═══ WRITING + CITY GUIDES — side by side ════════════════ -->
+  <section class="section">
+    <div class="split-section">
+
+      <!-- LEFT: Field Notes -->
+      <div>
+        <div class="section-header">
+          <h2>Field Notes</h2>
+          <a href="/blog" class="label" style="text-decoration: none;">All notes →</a>
+        </div>
+        <div class="panel" style="padding-bottom: var(--space-lg);">
+          <span class="panel-label">field notes</span>
+          {recentPosts.map((post) => (
+            <a href={`/blog/${post.id.replace(/\.md$/, '')}`} class="post-row">
+              <div class="post-row-title">{post.data.title}</div>
+              <div class="post-row-meta">{post.data.description}</div>
+            </a>
+          ))}
+        </div>
+      </div>
+
+      <!-- RIGHT: City Guides globe -->
+      <div>
+        <div class="section-header">
+          <h2>City Guides</h2>
+          <a href="/livedin" class="label" style="text-decoration: none;">View all →</a>
+        </div>
+        <div class="panel">
+          <span class="panel-label">city guides</span>
+          <Globe size={300} />
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ═══ BAD IDEAS — physics collapse ════════════════════════ -->
+  <section class="section">
+    <div class="section-header">
+      <h2>Bad Ideas</h2>
+      <span class="annotation">projects that didn't make it</span>
+    </div>
+    <BadIdeas />
+  </section>
+
+</BaseLayout>

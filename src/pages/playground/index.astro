@@ -1,0 +1,78 @@
+---
+// ─────────────────────────────────────────────────────────────
+// Playground — Project dashboard
+// ─────────────────────────────────────────────────────────────
+
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+
+const projects = await getCollection('playground', ({ data }) => !data.draft);
+const sorted = projects.sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+
+const stats = {
+  building: projects.filter(p => p.data.status === 'building').length,
+  built: projects.filter(p => p.data.status === 'built').length,
+  killed: projects.filter(p => p.data.status === 'killed').length,
+};
+
+const statusColors: Record<string, string> = {
+  building: 'tag-blue',
+  built: 'tag-blue',
+  killed: 'tag-black',
+};
+---
+
+<BaseLayout title="Playground" activeNav="playground">
+  <h1 style="margin-bottom: var(--space-lg);">Playground</h1>
+
+  <!-- Aggregate stats -->
+  <div class="grid-3" style="margin-bottom: var(--space-xl);">
+    <div class="panel" style="text-align: center; padding: var(--space-lg) var(--space-sm);">
+      <span class="panel-label">building</span>
+      <span class="stat-number" style="color: var(--color-interactive);">{stats.building}</span>
+      <span class="stat-label">in progress</span>
+    </div>
+    <div class="panel" style="text-align: center; padding: var(--space-lg) var(--space-sm);">
+      <span class="panel-label">built</span>
+      <span class="stat-number">{stats.built}</span>
+      <span class="stat-label">shipped</span>
+    </div>
+    <div class="panel" style="text-align: center; padding: var(--space-lg) var(--space-sm);">
+      <span class="panel-label">killed</span>
+      <span class="stat-number">{stats.killed}</span>
+      <span class="stat-label">rip</span>
+    </div>
+  </div>
+
+  <!-- Project cards -->
+  <section class="panel">
+    <span class="panel-label">projects</span>
+    <div class="grid-2">
+      {sorted.map((project) => (
+        <div class="card">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-sm);">
+            <span class="card-title">{project.data.title}</span>
+            <span class={`tag ${statusColors[project.data.status]}`}>{project.data.status}</span>
+          </div>
+          <p class="card-description">{project.data.description}</p>
+          {project.data.url && (
+            <a href={project.data.url} class="btn" style="margin-top: var(--space-sm); font-size: 0.6rem;" target="_blank" rel="noopener">
+              Visit →
+            </a>
+          )}
+          {project.data.tags.length > 0 && (
+            <div class="post-tags" style="margin-top: var(--space-sm);">
+              {project.data.tags.map((tag: string) => (
+                <span class="tag">{tag}</span>
+              ))}
+            </div>
+          )}
+        </div>
+      ))}
+    </div>
+
+    {sorted.length === 0 && (
+      <p style="color: var(--color-muted);">No projects yet. Add markdown files to <code>src/content/playground/</code>.</p>
+    )}
+  </section>
+</BaseLayout>

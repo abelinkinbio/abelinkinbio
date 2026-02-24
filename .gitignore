@@ -1,0 +1,18 @@
+# Astro build output
+dist/
+
+# Dependencies
+node_modules/
+
+# Astro cache
+.astro/
+
+# Environment variables
+.env
+.env.*
+
+# OS files
+.DS_Store
+
+# Wrangler
+.wrangler/

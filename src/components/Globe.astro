@@ -1,0 +1,122 @@
+---
+// ─────────────────────────────────────────────────────────────
+// Globe.astro — Rotating D3 orthographic globe
+//
+// Shows a halftone-dot-filled world with pulsing city beacons.
+// Uses TopoJSON from world-atlas for lightweight map data (~15KB).
+// All rendering happens client-side on a <canvas> element.
+// ─────────────────────────────────────────────────────────────
+
+interface Props {
+  size?: number;
+}
+
+const { size = 300 } = Astro.props;
+---
+
+<div class="globe-wrap">
+  <div class="globe-container">
+    <canvas id="globe" width={size} height={size}></canvas>
+    <div class="globe-loading" id="globe-loading">Loading...</div>
+    <div class="globe-hint" id="globe-hint" style="display: none;">drag to rotate</div>
+  </div>
+</div>
+
+<script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+<script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/topojson/3.0.2/topojson.min.js"></script>
+
+<script is:inline>
+(function() {
+  var canvas = document.getElementById('globe');
+  if (!canvas) return;
+  var ctx = canvas.getContext('2d');
+  var loadingEl = document.getElementById('globe-loading');
+  var hintEl = document.getElementById('globe-hint');
+
+  // Scale canvas for sharp rendering on high-DPI screens
+  var dpr = window.devicePixelRatio || 1;
+  var cssW = canvas.getAttribute('width') | 0;
+  var cssH = canvas.getAttribute('height') | 0;
+  canvas.width = cssW * dpr;
+  canvas.height = cssH * dpr;
+  canvas.style.width = cssW + 'px';
+  canvas.style.height = cssH + 'px';
+  ctx.scale(dpr, dpr);
+
+  var R = cssW * 0.43, cxG = cssW / 2, cyG = cssH / 2;
+  var C = { globeBg:'#F0EBE2', border:'#94B3CC', grat:'rgba(148,179,204,0.18)', land:'#7A9CB8', coast:'rgba(148,179,204,0.35)', beacon:'#3B82F6' };
+
+  var cities = [
+    { lat:38.7223, lng:-9.1393, name:'Lisbon' },
+    { lat:38.9072, lng:-77.0369, name:'D.C.' },
+    { lat:30.2672, lng:-97.7431, name:'ATX' }
+  ];
+
+  var projection = d3.geoOrthographic().scale(R).translate([cxG,cyG]).clipAngle(90).rotate([40,-20]);
+  var pathGen = d3.geoPath().projection(projection).context(ctx);
+  var landGeo = null, landDots = [];
+  var autoRotate = true, rotation = [40,-20], pulse = 0;
+
+  // Point-in-polygon via ray casting
+  function pip(pt,ring){var x=pt[0],y=pt[1],ins=false;for(var i=0,j=ring.length-1;i<ring.length;j=i++){var xi=ring[i][0],yi=ring[i][1],xj=ring[j][0],yj=ring[j][1];if((yi>y)!==(yj>y)&&x<((xj-xi)*(y-yi))/(yj-yi)+xi)ins=!ins;}return ins;}
+
+  function inFeature(pt,feat){
+    var g=feat.geometry;
+    if(g.type==='Polygon'){if(!pip(pt,g.coordinates[0]))return false;for(var i=1;i<g.coordinates.length;i++)if(pip(pt,g.coordinates[i]))return false;return true;}
+    if(g.type==='MultiPolygon'){for(var p=0;p<g.coordinates.length;p++){var poly=g.coordinates[p];if(pip(pt,poly[0])){var hole=false;for(var h=1;h<poly.length;h++)if(pip(pt,poly[h])){hole=true;break;}if(!hole)return true;}}}
+    return false;
+  }
+
+  // Generate halftone dots inside land polygons
+  function genDots(features,spacing){
+    var dots=[],step=spacing*0.08;
+    for(var f=0;f<features.length;f++){var b=d3.geoBounds(features[f]);for(var lng=b[0][0];lng<=b[1][0];lng+=step)for(var lat=b[0][1];lat<=b[1][1];lat+=step)if(inFeature([lng,lat],features[f]))dots.push([lng,lat]);}
+    return dots;
+  }
+
+  function render(){
+    ctx.clearRect(0,0,cssW,cssH);
+    // Globe background
+    ctx.beginPath();ctx.arc(cxG,cyG,R,0,Math.PI*2);ctx.fillStyle=C.globeBg;ctx.fill();ctx.strokeStyle=C.border;ctx.lineWidth=1;ctx.stroke();
+    if(!landGeo)return;
+    // Graticule
+    ctx.beginPath();pathGen(d3.geoGraticule().step([30,30])());ctx.strokeStyle=C.grat;ctx.lineWidth=0.5;ctx.stroke();
+    // Coastlines
+    ctx.beginPath();landGeo.features.forEach(function(f){pathGen(f);});ctx.strokeStyle=C.coast;ctx.lineWidth=0.5;ctx.stroke();
+    // Land dots with edge fade
+    var rot=d3.geoRotation(projection.rotate());
+    for(var i=0;i<landDots.length;i++){var proj=projection(landDots[i]);if(!proj)continue;var rp=rot(landDots[i]);var dist=d3.geoDistance(rp,[0,0]);var fade=Math.max(0,1-dist/(Math.PI/2)*1.1);if(fade<0.05)continue;ctx.beginPath();ctx.arc(proj[0],proj[1],1.2,0,Math.PI*2);ctx.fillStyle=C.land;ctx.globalAlpha=fade*0.85;ctx.fill();}
+    ctx.globalAlpha=1;
+    // City beacons
+    pulse+=0.04;
+    for(var ci=0;ci<cities.length;ci++){var city=cities[ci];var cp=projection([city.lng,city.lat]);if(!cp)continue;var cr=rot([city.lng,city.lat]);var cd=d3.geoDistance(cr,[0,0]);if(cd>Math.PI/2)continue;var a=Math.max(0,1-cd/(Math.PI/2)*1.1);var pr=3.5+(Math.sin(pulse)+1)*4;ctx.beginPath();ctx.arc(cp[0],cp[1],pr,0,Math.PI*2);ctx.fillStyle=C.beacon;ctx.globalAlpha=a*Math.max(0,1-pr/14)*0.5;ctx.fill();ctx.beginPath();ctx.arc(cp[0],cp[1],3.5,0,Math.PI*2);ctx.fillStyle=C.beacon;ctx.globalAlpha=a;ctx.fill();if(a>0.4){ctx.font='10px "JetBrains Mono",monospace';ctx.fillStyle=C.beacon;ctx.globalAlpha=a*0.85;ctx.textAlign='left';ctx.fillText(city.name,cp[0]+7,cp[1]+3);}}
+    ctx.globalAlpha=1;
+  }
+
+  function animate(){if(autoRotate){rotation[0]+=0.12;projection.rotate(rotation);}render();requestAnimationFrame(animate);}
+
+  // Drag interaction
+  var dragging=false,sx,sy,sr;
+  canvas.addEventListener('mousedown',function(e){dragging=true;autoRotate=false;sx=e.clientX;sy=e.clientY;sr=rotation.slice();});
+  document.addEventListener('mousemove',function(e){if(!dragging)return;rotation[0]=sr[0]+(e.clientX-sx)*0.4;rotation[1]=sr[1]-(e.clientY-sy)*0.4;rotation[1]=Math.max(-60,Math.min(60,rotation[1]));projection.rotate(rotation);});
+  document.addEventListener('mouseup',function(){if(!dragging)return;dragging=false;setTimeout(function(){autoRotate=true;},3000);});
+  canvas.addEventListener('touchstart',function(e){e.preventDefault();var t=e.touches[0];dragging=true;autoRotate=false;sx=t.clientX;sy=t.clientY;sr=rotation.slice();},{passive:false});
+  document.addEventListener('touchmove',function(e){if(!dragging)return;var t=e.touches[0];rotation[0]=sr[0]+(t.clientX-sx)*0.4;rotation[1]=sr[1]-(t.clientY-sy)*0.4;rotation[1]=Math.max(-60,Math.min(60,rotation[1]));projection.rotate(rotation);});
+  document.addEventListener('touchend',function(){if(!dragging)return;dragging=false;setTimeout(function(){autoRotate=true;},3000);});
+
+  // Load TopoJSON with fallbacks
+  var urls=[
+    {url:'https://cdn.jsdelivr.net/npm/world-atlas@2/land-110m.json',type:'topojson'},
+    {url:'https://unpkg.com/world-atlas@2/land-110m.json',type:'topojson'},
+    {url:'https://raw.githubusercontent.com/martynafford/natural-earth-geojson/master/110m/physical/ne_110m_land.json',type:'geojson'}
+  ];
+  function tryLoad(idx){
+    if(idx>=urls.length){loadingEl.textContent='Map unavailable';animate();return;}
+    fetch(urls[idx].url).then(function(r){if(!r.ok)throw new Error(r.status);return r.json();}).then(function(data){
+      if(urls[idx].type==='topojson'){var key=Object.keys(data.objects)[0];landGeo=topojson.feature(data,data.objects[key]);}else{landGeo=data;}
+      landDots=genDots(landGeo.features,18);loadingEl.style.display='none';hintEl.style.display='block';animate();
+    }).catch(function(){tryLoad(idx+1);});
+  }
+  tryLoad(0);
+})();
+</script>

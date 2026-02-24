@@ -1,0 +1,458 @@
+---
+// ─────────────────────────────────────────────────────────────
+// Lived In — Tabbed City Guide
+//
+// A single page with three tabs: Lisbon (default), D.C., ATX.
+// Each tab shows a Leaflet map, category filters, and review
+// cards for that city.
+//
+// Review cards link directly to Google Maps via coordinates.
+// No individual review sub-pages — the card + one-liner is enough.
+//
+// How it works: All three cities' HTML is rendered at build time.
+// Client-side JS toggles visibility and initializes Leaflet maps.
+// Maps in hidden tabs get invalidateSize() called on tab switch
+// because Leaflet can't measure a hidden container properly.
+// ─────────────────────────────────────────────────────────────
+
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+
+// ─── City metadata ──────────────────────────────────────────
+const cityMeta: Record<string, { name: string; slug: string }> = {
+  lisbon: { name: 'Lisbon', slug: 'lisbon' },
+  dc:     { name: 'D.C.',   slug: 'dc' },
+  atx:    { name: 'ATX',    slug: 'atx' },
+};
+
+// Tab order — Lisbon loads first
+const tabOrder = ['lisbon', 'dc', 'atx'];
+
+// ─── Fetch all reviews ──────────────────────────────────────
+const allReviews = await getCollection('livedin');
+
+// Organize reviews by city, sorted by date (newest first)
+const reviewsByCity: Record<string, typeof allReviews> = {};
+for (const city of tabOrder) {
+  reviewsByCity[city] = allReviews
+    .filter(r => r.id.startsWith(city + '/') && !r.data.draft)
+    .sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+}
+
+// Get unique categories per city
+const categoriesByCity: Record<string, string[]> = {};
+for (const city of tabOrder) {
+  categoriesByCity[city] = [...new Set(reviewsByCity[city].map(r => r.data.category))].sort();
+}
+
+// ─── Map data ───────────────────────────────────────────────
+// City center coordinates & zoom levels
+const cityDefaults: Record<string, { lat: number; lng: number; zoom: number }> = {
+  atx:    { lat: 30.267, lng: -97.743, zoom: 14 },
+  dc:     { lat: 38.907, lng: -77.024, zoom: 14 },
+  lisbon: { lat: 38.714, lng: -9.145,  zoom: 15 },
+};
+
+// Serialize pin data for each city (only reviews with coordinates)
+const pinsByCity: Record<string, any[]> = {};
+for (const city of tabOrder) {
+  pinsByCity[city] = reviewsByCity[city]
+    .filter(r => r.data.coordinates)
+    .map(r => ({
+      lat: r.data.coordinates!.lat,
+      lng: r.data.coordinates!.lng,
+      title: r.data.title,
+      emoji: r.data.emoji,
+      description: r.data.description,
+      category: r.data.category,
+    }));
+}
+---
+
+<BaseLayout title="City Guides" activeNav="livedin">
+
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
+  <!-- ─── Page Header ──────────────────────────────────────── -->
+  <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: var(--space-lg);">
+    <h1>City Guides</h1>
+  </div>
+
+  <!-- ─── City Tabs ────────────────────────────────────────── -->
+  <div class="city-tabs" style="display: flex; gap: 0; margin-bottom: var(--space-xl); border-bottom: 1px solid var(--color-grid);">
+    {tabOrder.map((city, i) => (
+      <button
+        class={`city-tab ${i === 0 ? 'active' : ''}`}
+        data-city={city}
+        type="button"
+      >
+        {cityMeta[city].name}
+        <span class="tab-count">{reviewsByCity[city].length}</span>
+      </button>
+    ))}
+  </div>
+
+  <!-- ─── Tab Panels ───────────────────────────────────────── -->
+  {tabOrder.map((city, i) => {
+    const meta = cityMeta[city];
+    const reviews = reviewsByCity[city];
+    const categories = categoriesByCity[city];
+
+    return (
+      <div
+        class="city-panel"
+        data-city={city}
+        style={i !== 0 ? 'display: none;' : ''}
+      >
+        <!-- Map -->
+        <div class="map-container panel" style="margin-bottom: var(--space-xl);">
+          <span class="panel-label">map · {meta.name.toLowerCase()}</span>
+          <div id={`map-${city}`} style="width: 100%; height: 100%;"></div>
+        </div>
+
+        <!-- Category filter tags -->
+        {categories.length > 1 && (
+          <div style="margin-bottom: var(--space-lg); display: flex; gap: var(--space-xs); flex-wrap: wrap;">
+            <button class="tag tag-blue category-filter active" data-city={city} data-category="all">
+              all ({reviews.length})
+            </button>
+            {categories.map((cat: string) => (
+              <button class="tag category-filter" data-city={city} data-category={cat}>
+                {cat} ({reviews.filter((r: any) => r.data.category === cat).length})
+              </button>
+            ))}
+          </div>
+        )}
+
+        <!-- Reviews grid -->
+        <section class="panel">
+          <span class="panel-label">spots</span>
+          <div class="grid-2">
+            {reviews.map((review: any) => {
+              // Link cards directly to Google Maps using stored coordinates.
+              // Using the search API with lat,lng drops a pin at the exact spot
+              // without needing a Google Place ID. Falls back to name search
+              // for any review missing coordinates (shouldn't happen, but safe).
+              const mapsUrl = review.data.coordinates
+                ? `https://www.google.com/maps/search/?api=1&query=${review.data.coordinates.lat},${review.data.coordinates.lng}`
+                : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(review.data.title)}`;
+              return (
+                <a
+                  href={mapsUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="card review-card"
+                  data-category={review.data.category}
+                  style="text-decoration: none;"
+                >
+                  <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <span class="card-title">{review.data.emoji} {review.data.title}</span>
+                    <span class="tag">{review.data.category}</span>
+                  </div>
+                  <p class="card-description" style="margin-top: var(--space-xs);">{review.data.description}</p>
+                </a>
+              );
+            })}
+          </div>
+        </section>
+      </div>
+    );
+  })}
+
+</BaseLayout>
+
+<!-- Leaflet JS -->
+<script is:inline src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<!-- ─── Map + Tab + Filter Logic ─────────────────────────── -->
+<script is:inline
+  data-pins-by-city={JSON.stringify(pinsByCity)}
+  data-city-defaults={JSON.stringify(cityDefaults)}
+>
+  (function() {
+    var script = document.currentScript;
+    var pinsByCity = JSON.parse(script.getAttribute('data-pins-by-city'));
+    var cityDefaults = JSON.parse(script.getAttribute('data-city-defaults'));
+
+    // ─── Map Setup ──────────────────────────────────────────
+    // Store map instances so we can call invalidateSize on tab switch
+    var maps = {};
+
+    function makeIcon() {
+      var svg = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="34" viewBox="0 0 24 34">'
+        + '<path d="M12 33 C12 33 1 19 1 12 C1 5.82 5.82 1 12 1 C18.18 1 23 5.82 23 12 C23 19 12 33 12 33Z" '
+        + 'fill="#1A1A2E" stroke="#F5F0E8" stroke-width="1.5"/>'
+        + '<circle cx="12" cy="11" r="4" fill="#F5F0E8"/>'
+        + '</svg>';
+
+      return L.divIcon({
+        html: svg,
+        className: 'blueprint-pin',
+        iconSize: [24, 34],
+        iconAnchor: [12, 34],
+        popupAnchor: [0, -30],
+      });
+    }
+
+    function initMap(city) {
+      var el = document.getElementById('map-' + city);
+      if (!el || maps[city]) return;
+
+      var center = cityDefaults[city] || { lat: 0, lng: 0, zoom: 12 };
+      var pins = pinsByCity[city] || [];
+
+      var map = L.map('map-' + city, {
+        center: [center.lat, center.lng],
+        zoom: center.zoom,
+        zoomControl: false,
+        attributionControl: false,
+      });
+
+      L.control.zoom({ position: 'bottomright' }).addTo(map);
+      L.control.attribution({
+        position: 'bottomleft',
+        prefix: '<span style="font-size: 9px; opacity: 0.5;">Leaflet · CartoDB</span>'
+      }).addTo(map);
+
+      L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+        maxZoom: 19,
+        subdomains: 'abcd',
+      }).addTo(map);
+
+      var markers = [];
+      pins.forEach(function(pin) {
+        var popupHtml = '<div class="map-popup">'
+          + '<strong class="map-popup-title">' + pin.emoji + ' ' + pin.title + '</strong>'
+          + '<span class="map-popup-cat">' + pin.category + '</span>'
+          + '<p class="map-popup-desc">' + pin.description + '</p>'
+          + '<a class="map-popup-link" href="https://www.google.com/maps/search/?api=1&query=' + pin.lat + ',' + pin.lng + '" target="_blank" rel="noopener">open in maps →</a>'
+          + '</div>';
+
+        var marker = L.marker([pin.lat, pin.lng], { icon: makeIcon() })
+          .bindPopup(popupHtml, { maxWidth: 240, className: 'blueprint-popup' })
+          .addTo(map);
+
+        markers.push(marker);
+      });
+
+      if (markers.length > 0) {
+        var group = L.featureGroup(markers);
+        map.fitBounds(group.getBounds().pad(0.02), { maxZoom: 15 });
+        // Enforce a minimum zoom so cities with spread-out pins
+        // (ATX, DC) don't pull back to a regional highway view.
+        if (map.getZoom() < 13) {
+          map.setZoom(13);
+        }
+      }
+
+      maps[city] = map;
+    }
+
+    // Initialize the first (visible) map immediately
+    initMap('lisbon');
+
+    // ─── Tab Switching ──────────────────────────────────────
+    var tabs = document.querySelectorAll('.city-tab');
+    var panels = document.querySelectorAll('.city-panel');
+
+    tabs.forEach(function(tab) {
+      tab.addEventListener('click', function() {
+        var city = tab.getAttribute('data-city');
+
+        // Update active tab
+        tabs.forEach(function(t) { t.classList.remove('active'); });
+        tab.classList.add('active');
+
+        // Show matching panel, hide others
+        panels.forEach(function(panel) {
+          panel.style.display = panel.getAttribute('data-city') === city ? '' : 'none';
+        });
+
+        // Initialize map if first visit, then fix rendering.
+        // requestAnimationFrame ensures the panel is fully visible
+        // and laid out before Leaflet tries to measure the container.
+        requestAnimationFrame(function() {
+          initMap(city);
+          if (maps[city]) {
+            maps[city].invalidateSize();
+            // Second call catches any remaining tile offset
+            setTimeout(function() {
+              maps[city].invalidateSize();
+            }, 200);
+          }
+        });
+      });
+    });
+
+    // ─── Category Filtering ─────────────────────────────────
+    document.querySelectorAll('.category-filter').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var city = btn.getAttribute('data-city');
+        var category = btn.getAttribute('data-category');
+
+        // Update active filter
+        document.querySelectorAll('.category-filter[data-city="' + city + '"]').forEach(function(b) {
+          b.classList.remove('active');
+        });
+        btn.classList.add('active');
+
+        // Filter cards
+        var panel = document.querySelector('.city-panel[data-city="' + city + '"]');
+        if (!panel) return;
+
+        panel.querySelectorAll('.review-card').forEach(function(card) {
+          if (category === 'all' || card.getAttribute('data-category') === category) {
+            card.classList.remove('hidden');
+          } else {
+            card.classList.add('hidden');
+          }
+        });
+      });
+    });
+  })();
+</script>
+
+<!-- ─── Styles ─────────────────────────────────────────────── -->
+<style>
+  .city-tab {
+    font-family: var(--font-body);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    padding: var(--space-sm) var(--space-lg);
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    color: var(--color-muted);
+    cursor: pointer;
+    transition: color 0.15s ease, border-color 0.15s ease;
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+  }
+  .city-tab:hover { color: var(--color-text); }
+  .city-tab.active {
+    color: var(--color-blue);
+    border-bottom-color: var(--color-blue);
+  }
+  .tab-count {
+    font-size: 0.6rem;
+    opacity: 0.6;
+  }
+
+  .category-filter {
+    cursor: pointer;
+    background: none;
+    border: 1px solid var(--color-grid);
+    font-family: var(--font-body);
+    transition: border-color 0.15s ease, color 0.15s ease;
+  }
+  .category-filter:hover {
+    border-color: var(--color-blue);
+    color: var(--color-blue);
+  }
+  .category-filter.active {
+    border-color: var(--color-blue);
+    color: var(--color-blue);
+  }
+
+  .map-container {
+    overflow: hidden;
+    position: relative;
+    margin-top: 1rem;
+  }
+  .map-container .panel-label {
+    z-index: 2;
+  }
+
+  .review-card { transition: opacity 0.2s ease; }
+  .review-card.hidden { display: none; }
+</style>
+
+<!-- ─── Leaflet Blueprint Overrides (global) ──────────────── -->
+<style is:global>
+  #map-lisbon, #map-dc, #map-atx {
+    background: #F5F0E8;
+    z-index: 1;
+  }
+
+  .blueprint-pin {
+    background: none !important;
+    border: none !important;
+  }
+
+  .blueprint-popup .leaflet-popup-content-wrapper {
+    background: #F5F0E8;
+    border: 1px solid #94B3CC;
+    border-radius: 0;
+    box-shadow: 2px 2px 0 rgba(148, 179, 204, 0.3);
+    font-family: 'JetBrains Mono', 'Courier New', monospace;
+  }
+
+  .blueprint-popup .leaflet-popup-tip {
+    background: #F5F0E8;
+    border: 1px solid #94B3CC;
+    box-shadow: none;
+  }
+
+  .blueprint-popup .leaflet-popup-close-button {
+    color: #6B7280;
+    font-size: 16px;
+    padding: 4px 6px;
+  }
+  .blueprint-popup .leaflet-popup-close-button:hover { color: #1A1A2E; }
+
+  .map-popup { padding: 2px 0; }
+  .map-popup-title {
+    font-family: 'VT323', monospace;
+    font-size: 1.1rem;
+    color: #1A1A2E;
+    display: block;
+    line-height: 1.3;
+  }
+  .map-popup-cat {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.55rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #6B7280;
+    display: inline-block;
+    border: 1px solid #94B3CC;
+    padding: 1px 5px;
+    margin-top: 4px;
+  }
+  .map-popup-desc {
+    font-size: 0.7rem;
+    color: #6B7280;
+    margin: 6px 0;
+    line-height: 1.5;
+  }
+  .map-popup-link {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.6rem;
+    color: #3B82F6;
+    text-decoration: none;
+    letter-spacing: 0.02em;
+  }
+  .map-popup-link:hover { text-decoration: underline; }
+
+  .leaflet-control-zoom a {
+    background: #F5F0E8 !important;
+    border: 1px solid #94B3CC !important;
+    color: #1A1A2E !important;
+    font-family: 'JetBrains Mono', monospace !important;
+    font-size: 14px !important;
+    width: 28px !important;
+    height: 28px !important;
+    line-height: 28px !important;
+    border-radius: 0 !important;
+  }
+  .leaflet-control-zoom a:hover { background: #EDE8DF !important; }
+  .leaflet-control-zoom { border: none !important; box-shadow: none !important; }
+  .leaflet-control-zoom-in { border-bottom: none !important; }
+  .leaflet-control-attribution {
+    background: transparent !important;
+    font-family: 'JetBrains Mono', monospace !important;
+  }
+</style>

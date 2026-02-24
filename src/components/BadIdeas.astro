@@ -1,0 +1,167 @@
+---
+// ─────────────────────────────────────────────────────────────
+// BadIdeas.astro — Structured card grid → physics collapse
+//
+// Cards look like real project tiles (circular icon + line bars).
+// Clicking any card triggers Matter.js: the entire grid collapses
+// under gravity. Cards tumble, collide, and pile up at the bottom.
+//
+// The trick: we snapshot each card's CSS grid position, switch to
+// absolute positioning, then create Matter.js rigid bodies at
+// those exact coordinates. The user sees no jump — but now physics
+// controls everything.
+// ─────────────────────────────────────────────────────────────
+
+// Lucide-style SVG icons for each project
+const badIdeas = [
+  { icon: 'film' },
+  { icon: 'coffee' },
+  { icon: 'cloud' },
+  { icon: 'music' },
+  { icon: 'download' },
+  { icon: 'camera' },
+];
+
+// Map icon names to SVG path data (Lucide icons)
+const iconPaths: Record<string, string> = {
+  film: '<rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"/><line x1="7" y1="2" x2="7" y2="22"/><line x1="17" y1="2" x2="17" y2="22"/><line x1="2" y1="12" x2="22" y2="12"/><line x1="2" y1="7" x2="7" y2="7"/><line x1="2" y1="17" x2="7" y2="17"/><line x1="17" y1="7" x2="22" y2="7"/><line x1="17" y1="17" x2="22" y2="17"/>',
+  coffee: '<path d="M17 8h1a4 4 0 1 1 0 8h-1"/><path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4Z"/><line x1="6" y1="2" x2="6" y2="4"/><line x1="10" y1="2" x2="10" y2="4"/><line x1="14" y1="2" x2="14" y2="4"/>',
+  cloud: '<path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/>',
+  music: '<path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/>',
+  download: '<path d="M12 3v12"/><path d="m8 11 4 4 4-4"/><path d="M8 5H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-4"/>',
+  camera: '<path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/>',
+};
+---
+
+<div class="bad-ideas-container" id="bad-ideas-container">
+  <div class="bad-ideas-grid" id="bad-ideas-grid">
+    {badIdeas.map((idea) => (
+      <div class="bi-card">
+        <div class="bi-card-inner">
+          <div class="bi-card-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" set:html={iconPaths[idea.icon]} />
+          </div>
+          <div class="bi-card-lines">
+            <div class="bi-card-line"></div>
+            <div class="bi-card-line"></div>
+            <div class="bi-card-line"></div>
+          </div>
+        </div>
+      </div>
+    ))}
+  </div>
+</div>
+
+<script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.20.0/matter.min.js"></script>
+
+<script is:inline>
+(function() {
+  var Engine = Matter.Engine,
+      Runner = Matter.Runner,
+      Bodies = Matter.Bodies,
+      Composite = Matter.Composite;
+
+  var container = document.getElementById('bad-ideas-container');
+  var grid = document.getElementById('bad-ideas-grid');
+  if (!container || !grid) return;
+  var cards = grid.querySelectorAll('.bi-card');
+  var collapsed = false;
+
+  function triggerCollapse() {
+    if (collapsed) return;
+    collapsed = true;
+
+    var containerRect = container.getBoundingClientRect();
+
+    // 1. Snapshot each card's position while still in CSS grid
+    var snapshots = [];
+    cards.forEach(function(card) {
+      var rect = card.getBoundingClientRect();
+      snapshots.push({
+        el: card,
+        x: rect.left - containerRect.left + rect.width / 2,
+        y: rect.top - containerRect.top + rect.height / 2,
+        w: rect.width,
+        h: rect.height
+      });
+    });
+
+    // 2. Set fixed dimensions for physics container
+    var gridH = grid.offsetHeight;
+    var gridW = grid.offsetWidth;
+    var collapseH = gridH + 80;
+    grid.classList.add('collapsed');
+    grid.style.height = collapseH + 'px';
+    grid.style.width = gridW + 'px';
+
+    // 3. Position cards absolutely at their snapshot positions
+    snapshots.forEach(function(s) {
+      s.el.style.position = 'absolute';
+      s.el.style.width = s.w + 'px';
+      s.el.style.left = '0';
+      s.el.style.top = '0';
+      s.el.style.transform = 'translate(' + (s.x - s.w / 2) + 'px, ' + (s.y - s.h / 2) + 'px)';
+      s.el.style.cursor = 'default';
+      s.el.style.pointerEvents = 'none';
+    });
+
+    // 4. Create Matter.js world
+    var engine = Engine.create({ gravity: { x: 0, y: 1.5 } });
+    var wallT = 40;
+    var walls = [
+      Bodies.rectangle(gridW / 2, collapseH + wallT / 2, gridW + 100, wallT, { isStatic: true, friction: 0.8 }),
+      Bodies.rectangle(-wallT / 2, collapseH / 2, wallT, collapseH * 2, { isStatic: true, friction: 0.3 }),
+      Bodies.rectangle(gridW + wallT / 2, collapseH / 2, wallT, collapseH * 2, { isStatic: true, friction: 0.3 }),
+    ];
+    Composite.add(engine.world, walls);
+
+    // 5. Create rigid bodies for each card
+    var bodyPairs = [];
+    snapshots.forEach(function(s) {
+      var angle = (Math.random() - 0.5) * 0.15;
+      var body = Bodies.rectangle(s.x, s.y, s.w, s.h, {
+        friction: 0.5,
+        restitution: 0.1,
+        density: 0.003,
+        angle: angle,
+        chamfer: { radius: 2 }
+      });
+      Composite.add(engine.world, body);
+      bodyPairs.push({ el: s.el, body: body, w: s.w, h: s.h });
+    });
+
+    // 6. Run physics and sync HTML positions each frame
+    var runner = Runner.create();
+    Runner.run(runner, engine);
+
+    var frameCount = 0;
+    function sync() {
+      frameCount++;
+      var allSleeping = true;
+
+      for (var i = 0; i < bodyPairs.length; i++) {
+        var bp = bodyPairs[i];
+        var pos = bp.body.position;
+        var deg = bp.body.angle * (180 / Math.PI);
+        bp.el.style.transform =
+          'translate(' + (pos.x - bp.w / 2) + 'px, ' +
+          (pos.y - bp.h / 2) + 'px) rotate(' + deg + 'deg)';
+        if (bp.body.speed > 0.1) allSleeping = false;
+      }
+
+      // Stop engine once cards settle or after ~5 seconds
+      if ((allSleeping && frameCount > 120) || frameCount > 300) {
+        Runner.stop(runner);
+        return;
+      }
+      requestAnimationFrame(sync);
+    }
+    sync();
+  }
+
+  // Any card click triggers the collapse
+  cards.forEach(function(card) {
+    card.addEventListener('click', triggerCollapse);
+  });
+})();
+</script>

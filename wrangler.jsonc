@@ -1,0 +1,28 @@
+{
+  // ─────────────────────────────────────────────────────────────
+  // Wrangler configuration for Cloudflare Workers
+  //
+  // This tells Cloudflare Workers how to serve the site.
+  // The "assets" section points to Astro's build output folder.
+  // Static asset requests (HTML, CSS, JS, images) are served
+  // for FREE — you don't pay per request.
+  //
+  // To deploy: npm run deploy (or: astro build && wrangler deploy)
+  // To preview locally: wrangler dev
+  // ─────────────────────────────────────────────────────────────
+
+  "$schema": "node_modules/wrangler/config-schema.json",
+
+  // This becomes your Worker name in the Cloudflare dashboard.
+  "name": "abelinkinbio",
+
+  // Compatibility date — locks Worker behavior to a specific date
+  // so Cloudflare can ship improvements without breaking your site.
+  "compatibility_date": "2025-02-10",
+
+  // Static assets configuration — this is the key part.
+  // "directory" points to Astro's output folder after running `astro build`.
+  "assets": {
+    "directory": "./dist"
+  }
+}

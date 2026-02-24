@@ -1,0 +1,65 @@
+---
+// ─────────────────────────────────────────────────────────────
+// Individual blog post — renders markdown content with the
+// Blueprint post layout. Astro calls getStaticPaths() at build
+// time to generate one HTML page per blog post.
+// ─────────────────────────────────────────────────────────────
+
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection, render } from 'astro:content';
+
+// Tell Astro which pages to generate at build time
+export async function getStaticPaths() {
+  const posts = await getCollection('blog');
+  return posts.map((post) => ({
+    params: { slug: post.id.replace(/\.md$/, '') },
+    props: { post },
+  }));
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+
+// Format the date nicely
+const formattedDate = post.data.date.toLocaleDateString('en-US', {
+  month: 'long',
+  day: 'numeric',
+  year: 'numeric',
+});
+
+// Estimate reading time (~200 words per minute)
+const wordCount = post.body ? post.body.split(/\s+/).length : 0;
+const readingTime = Math.max(1, Math.ceil(wordCount / 200));
+---
+
+<BaseLayout title={post.data.title} description={post.data.description} activeNav="blog">
+  <article>
+    <!-- Post header -->
+    <div class="post-header">
+      <h1 class="post-title">{post.data.title}</h1>
+      <p style="color: var(--color-muted); font-size: 0.8rem; margin-bottom: var(--space-sm);">
+        {post.data.description}
+      </p>
+      <div class="post-meta">
+        <span>{readingTime} min read</span>
+      </div>
+      {post.data.tags.length > 0 && (
+        <div class="post-tags">
+          {post.data.tags.map((tag: string) => (
+            <span class="tag tag-purple">{tag}</span>
+          ))}
+        </div>
+      )}
+    </div>
+
+    <!-- Rendered markdown content -->
+    <div class="post-content">
+      <Content />
+    </div>
+
+    <!-- Back link -->
+    <div style="margin-top: var(--space-2xl); padding-top: var(--space-lg); border-top: 1px solid var(--color-border);">
+      <a href="/blog" class="btn" style="font-size: 0.65rem;">← All notes</a>
+    </div>
+  </article>
+</BaseLayout>
