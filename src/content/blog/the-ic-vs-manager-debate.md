@@ -3,7 +3,7 @@ title: "Settling the IC vs. Manager Debate"
 description: "A few years ago I made the transition from IC to Manager. Here's what I wish someone had told me before I did."
 date: 2026-02-16
 tags: []
-draft: false
+draft: true
 ---
 
 I get asked about this a lot. Like, a lot a lot. I was one of the first PMs on our team to make the jump from individual contributor to manager, and because I have a reputation for being (probably too) transparent, my colleagues tend to come to me when they're thinking about making the same move. At this point I've had the conversation enough times that I've developed some real conviction about when it makes sense — and more importantly, when it doesn't.

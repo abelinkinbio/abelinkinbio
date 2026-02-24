@@ -3,7 +3,7 @@ title: "What's On My Desk 🖥️"
 description: "The physical tools I use every day and the problems they actually solve"
 date: 2026-02-16
 tags: ["hacking", "productivity"]
-draft: false
+draft: true
 ---
 
 I get asked about my desk setup more than I probably should. Most of the time it's because someone spots the keyboard on a video call and wants to know what it is. Fair enough. But the truth is I've spent an unreasonable amount of time thinking about every single thing on my desk. Not because I'm a productivity guru. I'm not. I just think the tools you use every day should be intentional. If you're going to stare at something for 8+ hours, it might as well be something you actually chose.

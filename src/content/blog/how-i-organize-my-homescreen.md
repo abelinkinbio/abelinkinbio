@@ -3,7 +3,7 @@ title: "How I Organize My Homescreen 📱"
 description: "Four screens, a few widgets, and more opinions than anyone asked for"
 date: 2026-02-16
 tags: []
-draft: false
+draft: true
 ---
 
 I think about my homescreen more than I should. I've reorganized it probably a dozen times in the last two years — each time convinced I'd finally figured it out, each time wrong. But somewhere in that cycle of moving app icons around like a lunatic, I landed on a system that actually makes sense. At least to me.

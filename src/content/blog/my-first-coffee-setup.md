@@ -3,7 +3,7 @@ title: "My First Coffee Setup ☕"
 description: "Pulling espresso at home with zero experience and zero patience"
 date: 2026-02-16
 tags: ["coffee", "espresso"]
-draft: false
+draft: true
 ---
 
 For as long as I can remember, I've had this dream of owning my own coffee shop one day. I don't mean a chain or some massive operation - I mean a small, intentionally designed neighborhood spot where people feel like they belong. Naturally, this meant I needed to actually understand coffee. Not just drinking it, but making it.

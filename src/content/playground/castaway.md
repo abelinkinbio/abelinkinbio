@@ -3,7 +3,7 @@ title: "castaway"
 description: "Fantasy Survivor league with outwit, outplay, outlast scoring"
 date: 2025-02-13
 status: "building"
-pinned: false
+pinned: true
 url: "https://castaway.abelinkinbio.com"
 tags: ["game", "cloudflare-workers"]
 draft: false

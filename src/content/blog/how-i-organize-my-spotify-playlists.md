@@ -3,7 +3,7 @@ title: "How I Organize My Playlists 🎵"
 description: "A running list of every playlist I have and why it exists"
 date: 2026-02-17
 tags: []
-draft: false
+draft: true
 ---
 
 I have 13 Spotify playlists. Every single one is named after a celebrity. Not because I have strong feelings about these people. Not because the music has anything to do with them. Mostly because Spotify doesn't let you sort playlists into folders, and alphabetical order was driving me insane. Naming playlists after people forces a kind of mental index — you just remember them. Ask me what playlist I want at a dinner party and I'll say "Put on Jonah Hill" without missing a beat.

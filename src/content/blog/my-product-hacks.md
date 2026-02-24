@@ -3,7 +3,7 @@ title: "My Product Hacks"
 description: "A short list of things I wish someone told me earlier"
 date: 2026-02-16
 tags: []
-draft: false
+draft: true
 ---
 
 # Product Hacks 🛠️

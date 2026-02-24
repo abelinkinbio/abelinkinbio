@@ -3,7 +3,7 @@ title: "Let's Fix Hiring"
 description: "What I've learned about hiring PMs when everyone around you is saying just fill the role"
 date: 2026-02-16
 tags: []
-draft: false
+draft: true
 ---
 
 Hiring is one of the most consequential things you'll ever do as a manager. And somehow, we've collectively agreed to be really bad at it.
