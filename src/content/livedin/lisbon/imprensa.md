@@ -1,6 +1,6 @@
 ---
 title: "Imprensa"
-description: "Favorite bar in lisbon"
+description: "Favorite bar in Lisbon"
 date: 2021-06-13
 emoji: "🥃"
 category: "bar"
@@ -11,4 +11,4 @@ coordinates:
 draft: false
 ---
 
-Favorite bar in lisbon
+Favorite bar in Lisbon

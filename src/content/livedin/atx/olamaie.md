@@ -3,7 +3,7 @@ title: "Olamaie"
 description: "Sunday Brunch to end the weekend"
 date: 2021-06-15
 emoji: "🍽️"
-category: "dinner"
+category: "brunch"
 tags: ["date-nite", "top-10"]
 coordinates:
   lat: 30.2799

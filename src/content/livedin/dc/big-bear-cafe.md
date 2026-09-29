@@ -1,5 +1,5 @@
 ---
-title: "Big Bear Coffee"
+title: "Big Bear Cafe"
 description: "Outdoor coffee shop to work remote for the day"
 date: 2021-06-13
 emoji: "☕️"
