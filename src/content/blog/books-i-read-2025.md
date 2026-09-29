@@ -26,3 +26,7 @@ If you read so many books why do you all describe yourselves as voracious.
 - *How Google Works* by Eric Schmidt
 - *The High Growth Handbook* by Elad Gil
 - *The Hard Thing about Hard Things* by Ben Horowitz
+- *The Obstacle Is the Way* by Ryan Holiday
+- *No Rules Rules: Netflix and the Culture of Reinvention* by Reed Hastings and Erin Meyer
+- *Sandworm: A New Era of Cyberwar and the Hunt for the Kremlin's Most Dangerous Hackers* by Andy Greenberg
+- *Nuclear War: A Scenario* by Annie Jacobsen
