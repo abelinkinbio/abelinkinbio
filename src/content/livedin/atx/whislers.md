@@ -1,5 +1,5 @@
 ---
-title: "Whislers"
+title: "Whisler's"
 description: "Great for a midday pit stop"
 date: 2021-06-15
 emoji: "🍻"

@@ -6,8 +6,9 @@
 // Each tab shows a Leaflet map, category filters, and review
 // cards for that city.
 //
-// Review cards link directly to Google Maps via coordinates.
-// No individual review sub-pages — the card + one-liner is enough.
+// Cards and map popups show the place name and link to a maps
+// search for that name plus city. Coordinates are only used to
+// drop pins. No individual review sub-pages — the card is enough.
 //
 // How it works: All three cities' HTML is rendered at build time.
 // Client-side JS toggles visibility and initializes Leaflet maps.
@@ -45,6 +46,60 @@ for (const city of tabOrder) {
   categoriesByCity[city] = [...new Set(reviewsByCity[city].map(r => r.data.category))].sort();
 }
 
+// ─── Place names & map links ────────────────────────────────
+// Search labels are what we append so "Liberty" resolves in
+// Lisbon rather than some other city. Coordinates never go in
+// these URLs — they only position pins.
+const cityQueryName: Record<string, string> = {
+  lisbon: 'Lisbon',
+  dc: 'Washington, DC',
+  atx: 'Austin',
+};
+
+function placeName(data: { name?: string; title: string }): string {
+  const explicit = data.name?.trim();
+  return explicit ? explicit : data.title;
+}
+
+function mapSearchQuery(name: string, city: string): string {
+  return `${name}, ${cityQueryName[city] ?? city}`;
+}
+
+function googleMapsSearchUrl(query: string): string {
+  return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`;
+}
+
+function appleMapsSearchUrl(query: string): string {
+  return `https://maps.apple.com/?q=${encodeURIComponent(query)}`;
+}
+
+function osmSearchUrl(query: string): string {
+  return `https://www.openstreetmap.org/search?query=${encodeURIComponent(query)}`;
+}
+
+function placeLinks(
+  data: {
+    name?: string;
+    title: string;
+    mapsUrl?: string;
+    googleMapsUrl?: string;
+    website?: string;
+  },
+  city: string,
+) {
+  const name = placeName(data);
+  const query = mapSearchQuery(name, city);
+  return {
+    name,
+    // Prefer a verified URL from frontmatter. Otherwise a search
+    // for the place name and city, which is enough to find it.
+    mapsUrl: data.mapsUrl ?? data.googleMapsUrl ?? googleMapsSearchUrl(query),
+    appleMapsUrl: appleMapsSearchUrl(query),
+    osmUrl: osmSearchUrl(query),
+    website: data.website,
+  };
+}
+
 // ─── Map data ───────────────────────────────────────────────
 // City center coordinates & zoom levels
 const cityDefaults: Record<string, { lat: number; lng: number; zoom: number }> = {
@@ -53,19 +108,28 @@ const cityDefaults: Record<string, { lat: number; lng: number; zoom: number }> =
   lisbon: { lat: 38.714, lng: -9.145,  zoom: 15 },
 };
 
-// Serialize pin data for each city (only reviews with coordinates)
+// Serialize pin data for each city (only reviews with coordinates).
+// lat/lng stay on the pin for Leaflet marker placement and are
+// not rendered in the popup.
 const pinsByCity: Record<string, any[]> = {};
 for (const city of tabOrder) {
   pinsByCity[city] = reviewsByCity[city]
     .filter(r => r.data.coordinates)
-    .map(r => ({
-      lat: r.data.coordinates!.lat,
-      lng: r.data.coordinates!.lng,
-      title: r.data.title,
-      emoji: r.data.emoji,
-      description: r.data.description,
-      category: r.data.category,
-    }));
+    .map(r => {
+      const place = placeLinks(r.data, city);
+      return {
+        lat: r.data.coordinates!.lat,
+        lng: r.data.coordinates!.lng,
+        name: place.name,
+        emoji: r.data.emoji,
+        description: r.data.description,
+        category: r.data.category,
+        mapsUrl: place.mapsUrl,
+        appleMapsUrl: place.appleMapsUrl,
+        osmUrl: place.osmUrl,
+        website: place.website,
+      };
+    });
 }
 ---
 
@@ -130,28 +194,36 @@ for (const city of tabOrder) {
           <span class="panel-label">spots</span>
           <div class="grid-2">
             {reviews.map((review: any) => {
-              // Link cards directly to Google Maps using stored coordinates.
-              // Using the search API with lat,lng drops a pin at the exact spot
-              // without needing a Google Place ID. Falls back to name search
-              // for any review missing coordinates (shouldn't happen, but safe).
-              const mapsUrl = review.data.coordinates
-                ? `https://www.google.com/maps/search/?api=1&query=${review.data.coordinates.lat},${review.data.coordinates.lng}`
-                : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(review.data.title)}`;
+              const place = placeLinks(review.data, city);
               return (
-                <a
-                  href={mapsUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
+                <article
                   class="card review-card"
                   data-category={review.data.category}
-                  style="text-decoration: none;"
                 >
-                  <div style="display: flex; justify-content: space-between; align-items: center;">
-                    <span class="card-title">{review.data.emoji} {review.data.title}</span>
+                  <div style="display: flex; justify-content: space-between; align-items: center; gap: var(--space-sm);">
+                    <a
+                      class="card-title"
+                      href={place.mapsUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >{review.data.emoji} {place.name}</a>
                     <span class="tag">{review.data.category}</span>
                   </div>
-                  <p class="card-description" style="margin-top: var(--space-xs);">{review.data.description}</p>
-                </a>
+                  <p class="card-description" style="margin-top: var(--space-xs); margin-bottom: 0;">{review.data.description}</p>
+                  <p class="card-meta" style="margin-bottom: 0; margin-top: var(--space-sm);">
+                    <a href={place.mapsUrl} target="_blank" rel="noopener noreferrer">Google Maps</a>
+                    <span aria-hidden="true"> · </span>
+                    <a href={place.appleMapsUrl} target="_blank" rel="noopener noreferrer">Apple Maps</a>
+                    <span aria-hidden="true"> · </span>
+                    <a href={place.osmUrl} target="_blank" rel="noopener noreferrer">OpenStreetMap</a>
+                    {place.website && (
+                      <>
+                        <span aria-hidden="true"> · </span>
+                        <a href={place.website} target="_blank" rel="noopener noreferrer">Website</a>
+                      </>
+                    )}
+                  </p>
+                </article>
               );
             })}
           </div>
@@ -212,21 +284,45 @@ for (const city of tabOrder) {
       L.control.zoom({ position: 'bottomright' }).addTo(map);
       L.control.attribution({
         position: 'bottomleft',
-        prefix: '<span style="font-size: 9px; opacity: 0.5;">Leaflet · CartoDB</span>'
+        prefix: false
       }).addTo(map);
 
-      L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+      // Standard OSM tiles. No API key. keepBuffer 0 and idle-only
+      // updates avoid prefetching tiles outside the current view
+      // (OpenStreetMap tile usage policy). One city map at a time.
+      L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 19,
-        subdomains: 'abcd',
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a>',
+        keepBuffer: 0,
+        updateWhenIdle: true,
+        updateWhenZooming: false,
       }).addTo(map);
+
+      function esc(value) {
+        return String(value == null ? '' : value)
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;');
+      }
+
+      function linkHtml(href, label) {
+        if (!href) return '';
+        return '<a class="map-popup-link" href="' + esc(href) + '" target="_blank" rel="noopener noreferrer">' + esc(label) + '</a>';
+      }
 
       var markers = [];
       pins.forEach(function(pin) {
         var popupHtml = '<div class="map-popup">'
-          + '<strong class="map-popup-title">' + pin.emoji + ' ' + pin.title + '</strong>'
-          + '<span class="map-popup-cat">' + pin.category + '</span>'
-          + '<p class="map-popup-desc">' + pin.description + '</p>'
-          + '<a class="map-popup-link" href="https://www.google.com/maps/search/?api=1&query=' + pin.lat + ',' + pin.lng + '" target="_blank" rel="noopener">open in maps →</a>'
+          + '<strong class="map-popup-title">' + esc(pin.emoji) + ' ' + esc(pin.name) + '</strong>'
+          + '<span class="map-popup-cat">' + esc(pin.category) + '</span>'
+          + '<p class="map-popup-desc">' + esc(pin.description) + '</p>'
+          + '<div class="map-popup-links">'
+          + linkHtml(pin.mapsUrl, 'Google Maps')
+          + linkHtml(pin.appleMapsUrl, 'Apple Maps')
+          + linkHtml(pin.osmUrl, 'OpenStreetMap')
+          + linkHtml(pin.website, 'Website')
+          + '</div>'
           + '</div>';
 
         var marker = L.marker([pin.lat, pin.lng], { icon: makeIcon() })
@@ -333,8 +429,8 @@ for (const city of tabOrder) {
   }
   .city-tab:hover { color: var(--color-text); }
   .city-tab.active {
-    color: var(--color-blue);
-    border-bottom-color: var(--color-blue);
+    color: var(--color-interactive);
+    border-bottom-color: var(--color-interactive);
   }
   .tab-count {
     font-size: 0.6rem;
@@ -349,12 +445,12 @@ for (const city of tabOrder) {
     transition: border-color 0.15s ease, color 0.15s ease;
   }
   .category-filter:hover {
-    border-color: var(--color-blue);
-    color: var(--color-blue);
+    border-color: var(--color-interactive);
+    color: var(--color-interactive);
   }
   .category-filter.active {
-    border-color: var(--color-blue);
-    color: var(--color-blue);
+    border-color: var(--color-interactive);
+    color: var(--color-interactive);
   }
 
   .map-container {
@@ -366,14 +462,14 @@ for (const city of tabOrder) {
     z-index: 2;
   }
 
-  .review-card { transition: opacity 0.2s ease; }
+  .review-card { transition: opacity var(--transition-fast); }
   .review-card.hidden { display: none; }
 </style>
 
 <!-- ─── Leaflet Blueprint Overrides (global) ──────────────── -->
 <style is:global>
   #map-lisbon, #map-dc, #map-atx {
-    background: #F5F0E8;
+    background: var(--color-bg);
     z-index: 1;
   }
 
@@ -383,76 +479,92 @@ for (const city of tabOrder) {
   }
 
   .blueprint-popup .leaflet-popup-content-wrapper {
-    background: #F5F0E8;
-    border: 1px solid #94B3CC;
+    background: var(--color-bg);
+    border: 1px solid var(--color-border);
     border-radius: 0;
-    box-shadow: 2px 2px 0 rgba(148, 179, 204, 0.3);
-    font-family: 'JetBrains Mono', 'Courier New', monospace;
+    box-shadow: 2px 2px 0 var(--color-grid-subtle);
+    font-family: var(--font-body);
   }
 
   .blueprint-popup .leaflet-popup-tip {
-    background: #F5F0E8;
-    border: 1px solid #94B3CC;
+    background: var(--color-bg);
+    border: 1px solid var(--color-border);
     box-shadow: none;
   }
 
   .blueprint-popup .leaflet-popup-close-button {
-    color: #6B7280;
+    color: var(--color-muted);
     font-size: 16px;
-    padding: 4px 6px;
+    padding: var(--space-xs);
   }
-  .blueprint-popup .leaflet-popup-close-button:hover { color: #1A1A2E; }
+  .blueprint-popup .leaflet-popup-close-button:hover { color: var(--color-text); }
 
   .map-popup { padding: 2px 0; }
   .map-popup-title {
-    font-family: 'VT323', monospace;
+    font-family: var(--font-heading);
     font-size: 1.1rem;
-    color: #1A1A2E;
+    color: var(--color-text);
     display: block;
     line-height: 1.3;
   }
   .map-popup-cat {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-body);
     font-size: 0.55rem;
     text-transform: uppercase;
     letter-spacing: 0.1em;
-    color: #6B7280;
+    color: var(--color-muted);
     display: inline-block;
-    border: 1px solid #94B3CC;
+    border: 1px solid var(--color-border);
     padding: 1px 5px;
-    margin-top: 4px;
+    margin-top: var(--space-xs);
   }
   .map-popup-desc {
     font-size: 0.7rem;
-    color: #6B7280;
-    margin: 6px 0;
+    color: var(--color-muted);
+    margin: var(--space-sm) 0;
     line-height: 1.5;
   }
+  .map-popup-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-xs) var(--space-sm);
+  }
   .map-popup-link {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.6rem;
-    color: #3B82F6;
+    font-family: var(--font-body);
+    font-size: 0.65rem;
+    color: var(--color-interactive);
     text-decoration: none;
     letter-spacing: 0.02em;
   }
-  .map-popup-link:hover { text-decoration: underline; }
+  .map-popup-link:hover {
+    color: var(--color-text);
+    text-decoration: underline;
+  }
 
   .leaflet-control-zoom a {
-    background: #F5F0E8 !important;
-    border: 1px solid #94B3CC !important;
-    color: #1A1A2E !important;
-    font-family: 'JetBrains Mono', monospace !important;
+    background: var(--color-bg) !important;
+    border: 1px solid var(--color-border) !important;
+    color: var(--color-text) !important;
+    font-family: var(--font-body) !important;
     font-size: 14px !important;
     width: 28px !important;
     height: 28px !important;
     line-height: 28px !important;
     border-radius: 0 !important;
   }
-  .leaflet-control-zoom a:hover { background: #EDE8DF !important; }
+  .leaflet-control-zoom a:hover { background: var(--color-bg-alt) !important; }
   .leaflet-control-zoom { border: none !important; box-shadow: none !important; }
   .leaflet-control-zoom-in { border-bottom: none !important; }
   .leaflet-control-attribution {
-    background: transparent !important;
-    font-family: 'JetBrains Mono', monospace !important;
+    background: var(--color-bg) !important;
+    font-family: var(--font-body) !important;
+    font-size: 10px !important;
+    line-height: 1.3 !important;
+    color: var(--color-text) !important;
+    max-width: 70%;
+  }
+  .leaflet-control-attribution a {
+    color: var(--color-text) !important;
+    text-decoration: underline;
   }
 </style>

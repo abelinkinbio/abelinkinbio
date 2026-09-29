@@ -1,6 +1,6 @@
 ---
 title: "Liberty"
-description: "Favorite breakfast spot in lisbon"
+description: "Favorite breakfast spot in Lisbon"
 date: 2021-06-13
 emoji: "🥞"
 category: "brunch"
@@ -11,4 +11,4 @@ coordinates:
 draft: false
 ---
 
-Favorite breakfast spot in lisbon
+Favorite breakfast spot in Lisbon

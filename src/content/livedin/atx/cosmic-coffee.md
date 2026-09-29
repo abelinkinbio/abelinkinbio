@@ -2,7 +2,7 @@
 title: "Cosmic Coffee"
 description: "Equal parts coffee house, beer garden, and food trucks."
 date: 2021-06-13
-emoji: "🍺"
+emoji: "☕"
 category: "coffee"
 tags: ["coffee", "south"]
 coordinates:

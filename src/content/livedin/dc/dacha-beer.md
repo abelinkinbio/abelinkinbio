@@ -2,7 +2,7 @@
 title: "Dacha Beer Garden"
 description: "Good spot to grab a beer and watch a game"
 date: 2021-06-13
-emoji: ""
+emoji: "🍺"
 category: "drinks"
 tags: ["drinks", "shaw"]
 coordinates:
