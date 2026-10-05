@@ -60,7 +60,7 @@ Schemas live in `src/content.config.ts`. `draft: true` is omitted from every pag
 - `emoji`: string, default `📍`
 - `category`: `coffee`, `dinner`, `drinks`, `bbq`, `pizza`, `tacos`, `ramen`, `brunch`, `bar`, `bakery`, `dessert`, `lunch`, `sushi`, `burger`, or `other` (default)
 - `coordinates`: optional `{ lat, lng }`, used only to drop the map pin
-- `mapsUrl` or `googleMapsUrl`: optional; this replaces the Google Maps link. Otherwise that link is a search for the place name and city. Cards also link to Apple Maps and OpenStreetMap searches.
+- `mapsUrl`, or `googleMapsUrl` when `mapsUrl` is omitted: optional replacement for the Google Maps link. Otherwise that link is a search for the place name and city. Apple Maps and OpenStreetMap links are always searches for that same name and city.
 - `website`: optional extra link
 - `tags`: string array, default `[]` (not shown on the card)
 - `draft`: boolean, default `false`
