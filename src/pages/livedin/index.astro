@@ -18,51 +18,37 @@
 
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { getCollection } from 'astro:content';
-
-// ─── City metadata ──────────────────────────────────────────
-const cityMeta: Record<string, { name: string; slug: string }> = {
-  lisbon: { name: 'Lisbon', slug: 'lisbon' },
-  dc:     { name: 'D.C.',   slug: 'dc' },
-  atx:    { name: 'ATX',    slug: 'atx' },
-};
-
-// Tab order — Lisbon loads first
-const tabOrder = ['lisbon', 'dc', 'atx'];
+import { cities } from '../../cities';
 
 // ─── Fetch all reviews ──────────────────────────────────────
 const allReviews = await getCollection('livedin');
 
 // Organize reviews by city, sorted by date (newest first)
 const reviewsByCity: Record<string, typeof allReviews> = {};
-for (const city of tabOrder) {
-  reviewsByCity[city] = allReviews
-    .filter(r => r.id.startsWith(city + '/') && !r.data.draft)
+for (const city of cities) {
+  reviewsByCity[city.id] = allReviews
+    .filter(r => r.id.startsWith(city.id + '/') && !r.data.draft)
     .sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
 }
 
 // Get unique categories per city
 const categoriesByCity: Record<string, string[]> = {};
-for (const city of tabOrder) {
-  categoriesByCity[city] = [...new Set(reviewsByCity[city].map(r => r.data.category))].sort();
+for (const city of cities) {
+  categoriesByCity[city.id] = [...new Set(reviewsByCity[city.id].map(r => r.data.category))].sort();
 }
 
 // ─── Place names & map links ────────────────────────────────
 // Search labels are what we append so "Liberty" resolves in
 // Lisbon rather than some other city. Coordinates never go in
 // these URLs — they only position pins.
-const cityQueryName: Record<string, string> = {
-  lisbon: 'Lisbon',
-  dc: 'Washington, DC',
-  atx: 'Austin',
-};
-
 function placeName(data: { name?: string; title: string }): string {
   const explicit = data.name?.trim();
   return explicit ? explicit : data.title;
 }
 
 function mapSearchQuery(name: string, city: string): string {
-  return `${name}, ${cityQueryName[city] ?? city}`;
+  const match = cities.find((entry) => entry.id === city);
+  return `${name}, ${match ? match.query : city}`;
 }
 
 function googleMapsSearchUrl(query: string): string {
@@ -102,21 +88,17 @@ function placeLinks(
 
 // ─── Map data ───────────────────────────────────────────────
 // City center coordinates & zoom levels
-const cityDefaults: Record<string, { lat: number; lng: number; zoom: number }> = {
-  atx:    { lat: 30.267, lng: -97.743, zoom: 14 },
-  dc:     { lat: 38.907, lng: -77.024, zoom: 14 },
-  lisbon: { lat: 38.714, lng: -9.145,  zoom: 15 },
-};
+const cityDefaults = Object.fromEntries(cities.map((city) => [city.id, city.map]));
 
 // Serialize pin data for each city (only reviews with coordinates).
 // lat/lng stay on the pin for Leaflet marker placement and are
 // not rendered in the popup.
 const pinsByCity: Record<string, any[]> = {};
-for (const city of tabOrder) {
-  pinsByCity[city] = reviewsByCity[city]
+for (const city of cities) {
+  pinsByCity[city.id] = reviewsByCity[city.id]
     .filter(r => r.data.coordinates)
     .map(r => {
-      const place = placeLinks(r.data, city);
+      const place = placeLinks(r.data, city.id);
       return {
         lat: r.data.coordinates!.lat,
         lng: r.data.coordinates!.lng,
@@ -145,44 +127,43 @@ for (const city of tabOrder) {
 
   <!-- ─── City Tabs ────────────────────────────────────────── -->
   <div class="city-tabs" style="display: flex; gap: 0; margin-bottom: var(--space-xl); border-bottom: 1px solid var(--color-grid);">
-    {tabOrder.map((city, i) => (
+    {cities.map((city, i) => (
       <button
         class={`city-tab ${i === 0 ? 'active' : ''}`}
-        data-city={city}
+        data-city={city.id}
         type="button"
       >
-        {cityMeta[city].name}
-        <span class="tab-count">{reviewsByCity[city].length}</span>
+        {city.name}
+        <span class="tab-count">{reviewsByCity[city.id].length}</span>
       </button>
     ))}
   </div>
 
   <!-- ─── Tab Panels ───────────────────────────────────────── -->
-  {tabOrder.map((city, i) => {
-    const meta = cityMeta[city];
-    const reviews = reviewsByCity[city];
-    const categories = categoriesByCity[city];
+  {cities.map((city, i) => {
+    const reviews = reviewsByCity[city.id];
+    const categories = categoriesByCity[city.id];
 
     return (
       <div
         class="city-panel"
-        data-city={city}
+        data-city={city.id}
         style={i !== 0 ? 'display: none;' : ''}
       >
         <!-- Map -->
         <div class="map-container panel" style="margin-bottom: var(--space-xl);">
-          <span class="panel-label">map · {meta.name.toLowerCase()}</span>
-          <div id={`map-${city}`} style="width: 100%; height: 100%;"></div>
+          <span class="panel-label">map · {city.name.toLowerCase()}</span>
+          <div id={`map-${city.id}`} style="width: 100%; height: 100%;"></div>
         </div>
 
         <!-- Category filter tags -->
         {categories.length > 1 && (
           <div style="margin-bottom: var(--space-lg); display: flex; gap: var(--space-xs); flex-wrap: wrap;">
-            <button class="tag tag-blue category-filter active" data-city={city} data-category="all">
+            <button class="tag tag-blue category-filter active" data-city={city.id} data-category="all">
               all ({reviews.length})
             </button>
             {categories.map((cat: string) => (
-              <button class="tag category-filter" data-city={city} data-category={cat}>
+              <button class="tag category-filter" data-city={city.id} data-category={cat}>
                 {cat} ({reviews.filter((r: any) => r.data.category === cat).length})
               </button>
             ))}
@@ -194,7 +175,7 @@ for (const city of tabOrder) {
           <span class="panel-label">spots</span>
           <div class="grid-2">
             {reviews.map((review: any) => {
-              const place = placeLinks(review.data, city);
+              const place = placeLinks(review.data, city.id);
               return (
                 <article
                   class="card review-card"
@@ -346,7 +327,7 @@ for (const city of tabOrder) {
     }
 
     // Initialize the first (visible) map immediately
-    initMap('lisbon');
+    initMap(document.querySelector('.city-tab').getAttribute('data-city'));
 
     // ─── Tab Switching ──────────────────────────────────────
     var tabs = document.querySelectorAll('.city-tab');
