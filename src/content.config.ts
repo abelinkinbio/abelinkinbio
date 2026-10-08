@@ -1,14 +1,3 @@
-// ─────────────────────────────────────────────────────────────
-// Content Collections Configuration
-//
-// Astro's Content Collections give us typed, validated content.
-// Each collection is a folder inside src/content/, and this file
-// defines what fields each piece of content must have.
-//
-// If you add a blog post without a title, Astro will throw an
-// error at build time — not silently deploy a broken page.
-// ─────────────────────────────────────────────────────────────
-
 import { defineCollection, z } from 'astro:content';
 
 // ─── Blog: Long-form writing ───────────────────────────────
@@ -24,17 +13,12 @@ const blog = defineCollection({
 });
 
 // ─── Lived In: Restaurant & café reviews ────────────────────
-// Coordinates are for map pin placement only. The place name
-// (name, or title when name is omitted) is what visitors see,
-// and links are built from that name plus the city.
 // The "city" field is inferred from the folder structure
 // (lisbon/, dc/, atx/) so you don't need to type it manually.
 const livedin = defineCollection({
   type: 'content',
   schema: z.object({
     title: z.string(),
-    // Optional display name. The page uses title when this is omitted.
-    name: z.string().optional(),
     description: z.string(),
     date: z.coerce.date(),
     emoji: z.string().default('📍'),
@@ -47,11 +31,6 @@ const livedin = defineCollection({
       lat: z.number(),
       lng: z.number(),
     }).optional(),
-    // Verified place link. When omitted, the page builds a
-    // Google Maps search from the place name and city.
-    mapsUrl: z.string().url().optional(),
-    website: z.string().url().optional(),
-    googleMapsUrl: z.string().url().optional(),
     tags: z.array(z.string()).default([]),
     draft: z.boolean().default(false),
   }),
@@ -64,7 +43,6 @@ const playground = defineCollection({
     title: z.string(),
     description: z.string(),
     date: z.coerce.date(),
-    emoji: z.string().default('🧪'),
     status: z.enum(['building', 'built', 'killed']).default('building'),
     pinned: z.boolean().default(false),
     url: z.string().url().optional(),
@@ -73,5 +51,4 @@ const playground = defineCollection({
   }),
 });
 
-// Export all collections — Astro picks these up automatically
 export const collections = { blog, livedin, playground };
