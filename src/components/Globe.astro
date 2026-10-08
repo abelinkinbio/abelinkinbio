@@ -7,11 +7,18 @@
 // All rendering happens client-side on a <canvas> element.
 // ─────────────────────────────────────────────────────────────
 
+import { cities } from '../cities';
+
 interface Props {
   size?: number;
 }
 
 const { size = 300 } = Astro.props;
+const globeCities = cities.map((city) => ({
+  lat: city.globe.lat,
+  lng: city.globe.lng,
+  name: city.name,
+}));
 ---
 
 <div class="globe-wrap">
@@ -25,13 +32,14 @@ const { size = 300 } = Astro.props;
 <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
 <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/topojson/3.0.2/topojson.min.js"></script>
 
-<script is:inline>
+<script is:inline data-cities={JSON.stringify(globeCities)}>
 (function() {
   var canvas = document.getElementById('globe');
   if (!canvas) return;
   var ctx = canvas.getContext('2d');
   var loadingEl = document.getElementById('globe-loading');
   var hintEl = document.getElementById('globe-hint');
+  var cities = JSON.parse(document.currentScript.getAttribute('data-cities'));
 
   // Scale canvas for sharp rendering on high-DPI screens
   var dpr = window.devicePixelRatio || 1;
@@ -45,12 +53,6 @@ const { size = 300 } = Astro.props;
 
   var R = cssW * 0.43, cxG = cssW / 2, cyG = cssH / 2;
   var C = { globeBg:'#F0EBE2', border:'#94B3CC', grat:'rgba(148,179,204,0.18)', land:'#7A9CB8', coast:'rgba(148,179,204,0.35)', beacon:'#3B82F6' };
-
-  var cities = [
-    { lat:38.7223, lng:-9.1393, name:'Lisbon' },
-    { lat:38.9072, lng:-77.0369, name:'D.C.' },
-    { lat:30.2672, lng:-97.7431, name:'ATX' }
-  ];
 
   var projection = d3.geoOrthographic().scale(R).translate([cxG,cyG]).clipAngle(90).rotate([40,-20]);
   var pathGen = d3.geoPath().projection(projection).context(ctx);
