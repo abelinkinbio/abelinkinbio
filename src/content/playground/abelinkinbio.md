@@ -2,7 +2,6 @@
 title: "abelinkinbio"
 description: "This site. Astro + Cloudflare Workers + Blueprint design."
 date: 2024-01-01
-emoji: "🌐"
 status: "built"
 pinned: false
 url: "https://abelinkinbio.com"
