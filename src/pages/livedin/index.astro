@@ -56,11 +56,6 @@ const cityQueryName: Record<string, string> = {
   atx: 'Austin',
 };
 
-function placeName(data: { name?: string; title: string }): string {
-  const explicit = data.name?.trim();
-  return explicit ? explicit : data.title;
-}
-
 function mapSearchQuery(name: string, city: string): string {
   return `${name}, ${cityQueryName[city] ?? city}`;
 }
@@ -79,24 +74,17 @@ function osmSearchUrl(query: string): string {
 
 function placeLinks(
   data: {
-    name?: string;
     title: string;
-    mapsUrl?: string;
-    googleMapsUrl?: string;
-    website?: string;
   },
   city: string,
 ) {
-  const name = placeName(data);
+  const name = data.title;
   const query = mapSearchQuery(name, city);
   return {
     name,
-    // Prefer a verified URL from frontmatter. Otherwise a search
-    // for the place name and city, which is enough to find it.
-    mapsUrl: data.mapsUrl ?? data.googleMapsUrl ?? googleMapsSearchUrl(query),
+    mapsUrl: googleMapsSearchUrl(query),
     appleMapsUrl: appleMapsSearchUrl(query),
     osmUrl: osmSearchUrl(query),
-    website: data.website,
   };
 }
 
@@ -127,7 +115,6 @@ for (const city of tabOrder) {
         mapsUrl: place.mapsUrl,
         appleMapsUrl: place.appleMapsUrl,
         osmUrl: place.osmUrl,
-        website: place.website,
       };
     });
 }
@@ -216,12 +203,6 @@ for (const city of tabOrder) {
                     <a href={place.appleMapsUrl} target="_blank" rel="noopener noreferrer">Apple Maps</a>
                     <span aria-hidden="true"> · </span>
                     <a href={place.osmUrl} target="_blank" rel="noopener noreferrer">OpenStreetMap</a>
-                    {place.website && (
-                      <>
-                        <span aria-hidden="true"> · </span>
-                        <a href={place.website} target="_blank" rel="noopener noreferrer">Website</a>
-                      </>
-                    )}
                   </p>
                 </article>
               );
@@ -321,7 +302,6 @@ for (const city of tabOrder) {
           + linkHtml(pin.mapsUrl, 'Google Maps')
           + linkHtml(pin.appleMapsUrl, 'Apple Maps')
           + linkHtml(pin.osmUrl, 'OpenStreetMap')
-          + linkHtml(pin.website, 'Website')
           + '</div>'
           + '</div>';
 
