@@ -18,11 +18,13 @@
 
   // Compatibility date — locks Worker behavior to a specific date
   // so Cloudflare can ship improvements without breaking your site.
-  "compatibility_date": "2025-02-10",
+  "compatibility_date": "2026-10-06",
 
   // Static assets configuration — this is the key part.
   // "directory" points to Astro's output folder after running `astro build`.
   "assets": {
-    "directory": "./dist"
+    "directory": "./dist",
+    // Unknown URLs are served from the nearest 404.html with status 404.
+    "not_found_handling": "404-page"
   }
 }
