@@ -28,7 +28,7 @@ const reviewsByCity: Record<string, typeof allReviews> = {};
 for (const city of cities) {
   reviewsByCity[city.id] = allReviews
     .filter(r => r.id.startsWith(city.id + '/') && !r.data.draft)
-    .sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+    .sort((a, b) => b.data.date.getTime() - a.data.date.getTime() || a.data.title.localeCompare(b.data.title));
 }
 
 // Get unique categories per city
