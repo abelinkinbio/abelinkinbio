@@ -53,7 +53,7 @@ Schemas live in `src/content.config.ts`. `draft: true` is omitted from every pag
 - `tags`: string array, default `[]`
 - `draft`: boolean, default `false`
 
-**Lived in** — `src/content/livedin/<city>/<place>.md`. `<city>` has to be `lisbon`, `dc`, or `atx`. City ids, names, search names, map centers, and globe coordinates live in `src/cities.ts`. `#map-lisbon`, `#map-dc`, and `#map-atx` are still written out in the style block of `src/pages/livedin/index.astro`. A file in another folder is not shown.
+**Lived in** — `src/content/livedin/<city>/<place>.md`. `<city>` has to be `lisbon`, `dc`, or `atx`. City ids, names, search names, and globe coordinates live in `src/cities.ts`. A file in another folder is not shown.
 
 - `title`, `description`, `date` (required)
 - `emoji`: string, default `📍`
