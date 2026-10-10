@@ -104,8 +104,7 @@ for (const city of cities) {
 
 <BaseLayout title="City Guides" activeNav="livedin">
 
-  <!-- Leaflet CSS -->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <link slot="head" rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 
   <!-- ─── Page Header ──────────────────────────────────────── -->
   <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: var(--space-lg);">
@@ -193,8 +192,6 @@ for (const city of cities) {
       </div>
     );
   })}
-
-</BaseLayout>
 
 <!-- Leaflet JS -->
 <script is:inline src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -529,3 +526,5 @@ for (const city of cities) {
     text-decoration: underline;
   }
 </style>
+
+</BaseLayout>

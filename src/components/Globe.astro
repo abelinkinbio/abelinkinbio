@@ -106,16 +106,15 @@ const globeCities = cities.map((city) => ({
   document.addEventListener('touchmove',function(e){if(!dragging)return;var t=e.touches[0];rotation[0]=sr[0]+(t.clientX-sx)*0.4;rotation[1]=sr[1]-(t.clientY-sy)*0.4;rotation[1]=Math.max(-60,Math.min(60,rotation[1]));projection.rotate(rotation);});
   document.addEventListener('touchend',function(){if(!dragging)return;dragging=false;setTimeout(function(){autoRotate=true;},3000);});
 
-  // Load TopoJSON with fallbacks
+  // Load TopoJSON. jsDelivr first, unpkg if that fails.
   var urls=[
-    {url:'https://cdn.jsdelivr.net/npm/world-atlas@2/land-110m.json',type:'topojson'},
-    {url:'https://unpkg.com/world-atlas@2/land-110m.json',type:'topojson'},
-    {url:'https://raw.githubusercontent.com/martynafford/natural-earth-geojson/master/110m/physical/ne_110m_land.json',type:'geojson'}
+    'https://cdn.jsdelivr.net/npm/world-atlas@2/land-110m.json',
+    'https://unpkg.com/world-atlas@2/land-110m.json'
   ];
   function tryLoad(idx){
     if(idx>=urls.length){loadingEl.textContent='Map unavailable';animate();return;}
-    fetch(urls[idx].url).then(function(r){if(!r.ok)throw new Error(r.status);return r.json();}).then(function(data){
-      if(urls[idx].type==='topojson'){var key=Object.keys(data.objects)[0];landGeo=topojson.feature(data,data.objects[key]);}else{landGeo=data;}
+    fetch(urls[idx]).then(function(r){if(!r.ok)throw new Error(r.status);return r.json();}).then(function(data){
+      var key=Object.keys(data.objects)[0];landGeo=topojson.feature(data,data.objects[key]);
       landDots=genDots(landGeo.features,18);loadingEl.style.display='none';hintEl.style.display='block';animate();
     }).catch(function(){tryLoad(idx+1);});
   }
