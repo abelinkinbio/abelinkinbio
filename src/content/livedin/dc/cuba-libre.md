@@ -8,7 +8,6 @@ tags: ["drinks"]
 coordinates:
   lat: 38.9001
   lng: -77.0236
-draft: false
 ---
 
 Cuban food and great drinks for a group

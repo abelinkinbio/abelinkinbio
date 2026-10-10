@@ -8,7 +8,6 @@ tags: ["bbq"]
 coordinates:
   lat: 30.4615
   lng: -97.8152
-draft: false
 ---
 
 Sit down and enjoy some Austin BBQ

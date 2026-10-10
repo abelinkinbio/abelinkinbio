@@ -2,7 +2,6 @@
 title: "How I Organize My Homescreen 📱"
 description: "Four screens, a few widgets, and more opinions than anyone asked for"
 date: 2026-02-16
-tags: []
 draft: true
 ---
 

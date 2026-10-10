@@ -8,7 +8,6 @@ tags: ["brunch"]
 coordinates:
   lat: 30.2457
   lng: -97.7622
-draft: false
 ---
 
 Upstyled comfort food

@@ -8,7 +8,6 @@ tags: ["drinks", "late-nite", "top-10"]
 coordinates:
   lat: 38.7163
   lng: -9.1531
-draft: false
 ---
 
 Favorite bar in Lisbon

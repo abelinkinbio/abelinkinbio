@@ -2,7 +2,6 @@
 title: "How I Organize My Playlists 🎵"
 description: "A running list of every playlist I have and why it exists"
 date: 2026-02-17
-tags: []
 draft: true
 ---
 

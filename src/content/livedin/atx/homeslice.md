@@ -8,7 +8,6 @@ tags: ["pizza", "south", "delivery"]
 coordinates:
   lat: 30.2492
   lng: -97.7495
-draft: false
 ---
 
 Pizza by the slice

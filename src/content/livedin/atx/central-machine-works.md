@@ -8,7 +8,6 @@ tags: ["beer", "east", "top-10"]
 coordinates:
   lat: 30.252
   lng: -97.7016
-draft: false
 ---
 
 Beer garden to start the day in East

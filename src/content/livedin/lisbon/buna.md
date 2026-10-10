@@ -8,7 +8,6 @@ tags: ["coffee", "são-bento", "top-10"]
 coordinates:
   lat: 38.7096
   lng: -9.1527
-draft: false
 ---
 
 Local neighborhood coffee shop

@@ -8,7 +8,6 @@ tags: ["pizza", "late-nite"]
 coordinates:
   lat: 38.8996
   lng: -77.0158
-draft: false
 ---
 
 Late-nite pizza by the slice

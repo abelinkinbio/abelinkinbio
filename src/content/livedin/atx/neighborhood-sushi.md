@@ -8,7 +8,6 @@ tags: ["sushi", "date-nite", "south"]
 coordinates:
   lat: 30.2465
   lng: -97.7511
-draft: false
 ---
 
 Early date night on the way home from South Congress

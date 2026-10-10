@@ -8,7 +8,6 @@ tags: ["ramen", "delivery"]
 coordinates:
   lat: 38.9085
   lng: -77.0322
-draft: false
 ---
 
 Solid ramen that delivers well too

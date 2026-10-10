@@ -8,7 +8,6 @@ tags: ["lunch", "lapa"]
 coordinates:
   lat: 38.7073
   lng: -9.1568
-draft: false
 ---
 
 Middle eastern street food

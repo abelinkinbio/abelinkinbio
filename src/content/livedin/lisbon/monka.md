@@ -8,7 +8,6 @@ tags: ["coffee", "lapa"]
 coordinates:
   lat: 38.7102
   lng: -9.1624
-draft: false
 ---
 
 Peak cafe culture

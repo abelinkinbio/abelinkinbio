@@ -6,7 +6,6 @@ status: "building"
 pinned: true
 url: "https://castaway.abelinkinbio.com"
 tags: ["game", "cloudflare-workers"]
-draft: false
 ---
 
 Fantasy Survivor league with a custom point system built around the show's core pillars: outwit, outplay, outlast.

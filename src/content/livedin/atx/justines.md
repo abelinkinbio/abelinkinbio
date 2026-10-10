@@ -8,7 +8,6 @@ tags: ["date-nite", "east"]
 coordinates:
   lat: 30.2532
   lng: -97.7006
-draft: false
 ---
 
 Early date night on the way home from East Austin
