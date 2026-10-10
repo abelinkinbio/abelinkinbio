@@ -8,7 +8,6 @@ tags: ["date-nite", "top-10"]
 coordinates:
   lat: 30.2799
   lng: -97.7437
-draft: false
 ---
 
 Sunday Brunch to end the weekend

@@ -8,7 +8,6 @@ tags: ["drinks", "happy-hour", "u-street", "top-10"]
 coordinates:
   lat: 38.9109
   lng: -77.0381
-draft: false
 ---
 
 Happy hour with good apps and sides

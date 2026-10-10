@@ -8,7 +8,6 @@ tags: ["coffee", "h-street"]
 coordinates:
   lat: 38.9001
   lng: -76.9999
-draft: false
 ---
 
 Oldie but goodie

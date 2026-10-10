@@ -8,7 +8,6 @@ tags: ["ramen", "east"]
 coordinates:
   lat: 30.3612
   lng: -97.7152
-draft: false
 ---
 
 Take a long work lunch

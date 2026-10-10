@@ -8,7 +8,6 @@ tags: ["coffee", "breakfast", "wine"]
 coordinates:
   lat: 38.7125
   lng: -9.1521
-draft: false
 ---
 
 Day-time café night-time wine bar

@@ -8,7 +8,6 @@ tags: ["taco", "drinks", "east", "top-10"]
 coordinates:
   lat: 30.2514
   lng: -97.7022
-draft: false
 ---
 
 Saturday afternoon tacos and drinks

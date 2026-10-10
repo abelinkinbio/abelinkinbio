@@ -2,7 +2,6 @@
 title: "A Few Good Recipes"
 description: "Two muffin recipes I've been working on and what I've learned so far"
 date: 2026-02-16
-tags: []
 draft: true
 ---
 

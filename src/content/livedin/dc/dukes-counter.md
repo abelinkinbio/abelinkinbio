@@ -8,7 +8,6 @@ tags: ["drinks"]
 coordinates:
   lat: 38.9102
   lng: -77.0382
-draft: false
 ---
 
 Great spot to watch the game

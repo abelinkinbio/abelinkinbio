@@ -8,7 +8,6 @@ tags: ["breakfast", "delivery", "american"]
 coordinates:
   lat: 38.7091
   lng: -9.1505
-draft: false
 ---
 
 When you're feeling homesick

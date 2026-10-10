@@ -8,7 +8,6 @@ tags: ["taco", "drinks", "south", "top-10"]
 coordinates:
   lat: 30.2451
   lng: -97.7793
-draft: false
 ---
 
 Best way to end the weekend

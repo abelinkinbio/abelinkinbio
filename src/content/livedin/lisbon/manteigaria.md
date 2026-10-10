@@ -8,7 +8,6 @@ tags: ["coffee", "pastries", "delivery"]
 coordinates:
   lat: 38.7108
   lng: -9.1441
-draft: false
 ---
 
 Snag an obligatory pastel de nata before leaving town

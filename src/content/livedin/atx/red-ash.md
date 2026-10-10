@@ -8,7 +8,6 @@ tags: ["italian", "date-nite", "downtown"]
 coordinates:
   lat: 30.2657
   lng: -97.7449
-draft: false
 ---
 
 Walking distance to downtown bars
