@@ -8,7 +8,6 @@ tags: ["indian", "downtown"]
 coordinates:
   lat: 38.8949
   lng: -77.0213
-draft: false
 ---
 
 Fancy but not too-fancy Indian food

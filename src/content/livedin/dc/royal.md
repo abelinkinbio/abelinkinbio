@@ -8,7 +8,6 @@ tags: ["late-nite", "shaw"]
 coordinates:
   lat: 38.915
   lng: -77.0186
-draft: false
 ---
 
 Late-nite drinks

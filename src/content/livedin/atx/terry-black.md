@@ -8,7 +8,6 @@ tags: ["bbq", "south", "top-10"]
 coordinates:
   lat: 30.2597
   lng: -97.7548
-draft: false
 ---
 
 Grab-and-go Texas BBQ

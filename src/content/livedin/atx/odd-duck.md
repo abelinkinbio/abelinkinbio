@@ -8,7 +8,6 @@ tags: ["date-nite", "happy-hour"]
 coordinates:
   lat: 30.2547
   lng: -97.7621
-draft: false
 ---
 
 Early date night to kickstart the weekend

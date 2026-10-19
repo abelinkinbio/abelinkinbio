@@ -8,7 +8,6 @@ tags: ["italian", "date-nite", "downtown"]
 coordinates:
   lat: 30.2702
   lng: -97.7512
-draft: false
 ---
 
 Friday night date spot

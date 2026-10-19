@@ -8,7 +8,6 @@ tags: ["sushi", "downtown"]
 coordinates:
   lat: 38.8937
   lng: -77.0276
-draft: false
 ---
 
 Omakase by Jiro Dreams of Sushi's protege

@@ -8,7 +8,6 @@ tags: ["drinks", "logan-circle", "top-10"]
 coordinates:
   lat: 38.909
   lng: -77.0321
-draft: false
 ---
 
 Barcade with a basement, rooftop, and window for Shake Shack delivery

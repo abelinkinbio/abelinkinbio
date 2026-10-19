@@ -8,7 +8,6 @@ tags: ["coffee", "drinks", "downtown"]
 coordinates:
   lat: 30.2675
   lng: -97.7508
-draft: false
 ---
 
 Work remote downtown for the afternoon

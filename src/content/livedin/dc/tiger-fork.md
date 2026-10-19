@@ -8,7 +8,6 @@ tags: ["fusion"]
 coordinates:
   lat: 38.9066
   lng: -77.0248
-draft: false
 ---
 
 Contemporary chinese tucked away in Blagden Alley

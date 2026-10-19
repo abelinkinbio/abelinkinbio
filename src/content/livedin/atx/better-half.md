@@ -8,7 +8,6 @@ tags: ["coffee", "beer", "downtown"]
 coordinates:
   lat: 30.2713
   lng: -97.7586
-draft: false
 ---
 
 Outdoor coffee shop conveniently located next to Hold Out Brewing.

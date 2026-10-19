@@ -8,7 +8,6 @@ tags: ["coffee", "east"]
 coordinates:
   lat: 30.2793
   lng: -97.6875
-draft: false
 ---
 
 Sunday Coffee spot to jumpstart the week

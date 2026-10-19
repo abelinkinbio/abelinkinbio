@@ -8,7 +8,6 @@ tags: ["brunch"]
 coordinates:
   lat: 30.2671
   lng: -97.7443
-draft: false
 ---
 
 Good little coffee joint for Saturday morning

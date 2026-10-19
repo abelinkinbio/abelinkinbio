@@ -2,7 +2,6 @@
 title: "Settling the IC vs. Manager Debate"
 description: "A few years ago I made the transition from IC to Manager. Here's what I wish someone had told me before I did."
 date: 2026-02-16
-tags: []
 draft: true
 ---
 

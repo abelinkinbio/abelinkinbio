@@ -8,7 +8,6 @@ tags: ["tacos", "h-street"]
 coordinates:
   lat: 38.8805
   lng: -76.9952
-draft: false
 ---
 
 Grab and go tacos on H Street

@@ -8,7 +8,6 @@ tags: ["drinks", "south"]
 coordinates:
   lat: 30.264
   lng: -97.727
-draft: false
 ---
 
 Grab drinks with a group

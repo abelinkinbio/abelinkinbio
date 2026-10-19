@@ -8,7 +8,6 @@ tags: ["american", "são-bento", "delivery"]
 coordinates:
   lat: 38.7175
   lng: -9.1668
-draft: false
 ---
 
 For when you've had too much 'european' food

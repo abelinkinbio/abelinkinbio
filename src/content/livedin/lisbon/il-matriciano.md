@@ -8,7 +8,6 @@ tags: ["italian", "são-bento", "top-10"]
 coordinates:
   lat: 38.7119
   lng: -9.1528
-draft: false
 ---
 
 Recommended by an Italian friend of mine

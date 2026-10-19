@@ -8,7 +8,6 @@ tags: ["drinks", "late-nite"]
 coordinates:
   lat: 38.7089
   lng: -9.1495
-draft: false
 ---
 
 Best paired with Tricky's next door

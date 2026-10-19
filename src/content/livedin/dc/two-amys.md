@@ -8,7 +8,6 @@ tags: ["pizza", "top-10"]
 coordinates:
   lat: 38.9336
   lng: -77.0731
-draft: false
 ---
 
 No reservations but worth the wait

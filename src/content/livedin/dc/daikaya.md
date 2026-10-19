@@ -8,7 +8,6 @@ tags: ["ramen", "downtown"]
 coordinates:
   lat: 38.8986
   lng: -77.0197
-draft: false
 ---
 
 Japanese comfort food and Sapporo

@@ -8,7 +8,6 @@ tags: ["drinks", "east", "happy-hour"]
 coordinates:
   lat: 30.2619
   lng: -97.7227
-draft: false
 ---
 
 Great for a midday pit stop

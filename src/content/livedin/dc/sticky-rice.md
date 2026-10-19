@@ -8,7 +8,6 @@ tags: ["sushi", "h-street"]
 coordinates:
   lat: 38.9004
   lng: -76.9893
-draft: false
 ---
 
 They serve a bucket of tots. A bucket.

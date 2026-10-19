@@ -8,7 +8,6 @@ tags: ["drinks", "downtown"]
 coordinates:
   lat: 30.268
   lng: -97.7441
-draft: false
 ---
 
 Nice cocktail bar to start the night off

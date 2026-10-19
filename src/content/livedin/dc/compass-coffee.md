@@ -8,7 +8,6 @@ tags: ["coffee", "downtown"]
 coordinates:
   lat: 38.9106
   lng: -77.0218
-draft: false
 ---
 
 Tons of locations across town with great speciality coffee

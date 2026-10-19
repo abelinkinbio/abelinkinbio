@@ -8,7 +8,6 @@ tags: ["italian", "shaw", "top-10"]
 coordinates:
   lat: 38.915
   lng: -77.0124
-draft: false
 ---
 
 Local neighborhood date-nite spot

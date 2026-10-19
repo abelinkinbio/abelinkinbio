@@ -8,7 +8,6 @@ tags: ["coffee", "h-street"]
 coordinates:
   lat: 38.9
   lng: -76.9867
-draft: false
 ---
 
 Best spot to work remote in DC

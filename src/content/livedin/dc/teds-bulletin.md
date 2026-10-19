@@ -8,7 +8,6 @@ tags: ["breakfast"]
 coordinates:
   lat: 38.8825
   lng: -76.9953
-draft: false
 ---
 
 All the diner essentials but without the diner
