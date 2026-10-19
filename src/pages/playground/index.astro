@@ -7,7 +7,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import { getCollection } from 'astro:content';
 
 const projects = await getCollection('playground', ({ data }) => !data.draft);
-const sorted = projects.sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+const sorted = projects.sort((a, b) => b.data.date.getTime() - a.data.date.getTime() || a.data.title.localeCompare(b.data.title));
 
 const stats = {
   building: projects.filter(p => p.data.status === 'building').length,

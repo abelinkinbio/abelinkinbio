@@ -8,13 +8,13 @@ import { getCollection } from 'astro:content';
 const allProjects = await getCollection('playground', ({ data }) => !data.draft);
 const pinnedProjects = allProjects
   .filter(p => p.data.pinned)
-  .sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
+  .sort((a, b) => b.data.date.getTime() - a.data.date.getTime() || a.data.title.localeCompare(b.data.title))
   .slice(0, 2);
 
 // Get recent blog posts (max 4)
 const allPosts = await getCollection('blog', ({ data }) => !data.draft);
 const recentPosts = allPosts
-  .sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
+  .sort((a, b) => b.data.date.getTime() - a.data.date.getTime() || a.data.title.localeCompare(b.data.title))
   .slice(0, 4);
 
 // Status tag color
