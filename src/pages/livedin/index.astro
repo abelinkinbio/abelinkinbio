@@ -75,9 +75,6 @@ function placeLinks(
 }
 
 // ─── Map data ───────────────────────────────────────────────
-// City center coordinates & zoom levels
-const cityDefaults = Object.fromEntries(cities.map((city) => [city.id, city.map]));
-
 // Serialize pin data for each city (only reviews with coordinates).
 // lat/lng stay on the pin for Leaflet marker placement and are
 // not rendered in the popup.
@@ -140,7 +137,7 @@ for (const city of cities) {
         <!-- Map -->
         <div class="map-container panel" style="margin-bottom: var(--space-xl);">
           <span class="panel-label">map · {city.name.toLowerCase()}</span>
-          <div id={`map-${city.id}`} style="width: 100%; height: 100%;"></div>
+          <div id={`map-${city.id}`} class="city-map" style="width: 100%; height: 100%;"></div>
         </div>
 
         <!-- Category filter tags -->
@@ -200,14 +197,10 @@ for (const city of cities) {
 <script is:inline src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
 <!-- ─── Map + Tab + Filter Logic ─────────────────────────── -->
-<script is:inline
-  data-pins-by-city={JSON.stringify(pinsByCity)}
-  data-city-defaults={JSON.stringify(cityDefaults)}
->
+<script is:inline data-pins-by-city={JSON.stringify(pinsByCity)}>
   (function() {
     var script = document.currentScript;
     var pinsByCity = JSON.parse(script.getAttribute('data-pins-by-city'));
-    var cityDefaults = JSON.parse(script.getAttribute('data-city-defaults'));
 
     // ─── Map Setup ──────────────────────────────────────────
     // Store map instances so we can call invalidateSize on tab switch
@@ -233,15 +226,16 @@ for (const city of cities) {
       var el = document.getElementById('map-' + city);
       if (!el || maps[city]) return;
 
-      var center = cityDefaults[city] || { lat: 0, lng: 0, zoom: 12 };
       var pins = pinsByCity[city] || [];
 
-      var map = L.map('map-' + city, {
-        center: [center.lat, center.lng],
-        zoom: center.zoom,
+      var map = L.map(el, {
         zoomControl: false,
         attributionControl: false,
       });
+
+      if (pins.length) {
+        map.setView([pins[0].lat, pins[0].lng], 13);
+      }
 
       L.control.zoom({ position: 'bottomright' }).addTo(map);
       L.control.attribution({
@@ -414,11 +408,6 @@ for (const city of cities) {
     color: var(--color-interactive);
   }
 
-  .map-container {
-    overflow: hidden;
-    position: relative;
-    margin-top: 1rem;
-  }
   .map-container .panel-label {
     z-index: 2;
   }
@@ -429,7 +418,7 @@ for (const city of cities) {
 
 <!-- ─── Leaflet Blueprint Overrides (global) ──────────────── -->
 <style is:global>
-  #map-lisbon, #map-dc, #map-atx {
+  .map-container > .city-map {
     background: var(--color-bg);
     z-index: 1;
   }
