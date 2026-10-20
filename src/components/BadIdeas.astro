@@ -52,24 +52,38 @@ const iconPaths: Record<string, string> = {
   </div>
 </div>
 
-<script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.20.0/matter.min.js"></script>
-
 <script is:inline>
 (function() {
-  var Engine = Matter.Engine,
-      Runner = Matter.Runner,
-      Bodies = Matter.Bodies,
-      Composite = Matter.Composite;
-
   var container = document.getElementById('bad-ideas-container');
   var grid = document.getElementById('bad-ideas-grid');
   if (!container || !grid) return;
   var cards = grid.querySelectorAll('.bi-card');
   var collapsed = false;
+  var matterLoading = false;
+
+  function loadMatter() {
+    if (window.Matter) return;
+    if (matterLoading) return;
+    matterLoading = true;
+    var el = document.createElement('script');
+    el.src = 'https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.20.0/matter.min.js';
+    el.onload = function() { triggerCollapse(); };
+    el.onerror = function() { matterLoading = false; };
+    document.head.appendChild(el);
+  }
 
   function triggerCollapse() {
     if (collapsed) return;
+    if (!window.Matter) {
+      loadMatter();
+      return;
+    }
     collapsed = true;
+
+    var Engine = Matter.Engine,
+        Runner = Matter.Runner,
+        Bodies = Matter.Bodies,
+        Composite = Matter.Composite;
 
     var containerRect = container.getBoundingClientRect();
 
