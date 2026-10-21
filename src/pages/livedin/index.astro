@@ -230,25 +230,10 @@ for (const city of cities) {
         attributionControl: false,
       });
 
-      if (pins.length) {
-        map.setView([pins[0].lat, pins[0].lng], 13);
-      }
-
       L.control.zoom({ position: 'bottomright' }).addTo(map);
       L.control.attribution({
         position: 'bottomleft',
         prefix: false
-      }).addTo(map);
-
-      // Standard OSM tiles. No API key. keepBuffer 0 and idle-only
-      // updates avoid prefetching tiles outside the current view
-      // (OpenStreetMap tile usage policy). One city map at a time.
-      L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        maxZoom: 19,
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a>',
-        keepBuffer: 0,
-        updateWhenIdle: true,
-        updateWhenZooming: false,
       }).addTo(map);
 
       function esc(value) {
@@ -289,10 +274,24 @@ for (const city of cities) {
         map.fitBounds(group.getBounds().pad(0.02), { maxZoom: 15 });
         // Enforce a minimum zoom so cities with spread-out pins
         // (ATX, DC) don't pull back to a regional highway view.
-        if (map.getZoom() < 13) {
-          map.setZoom(13);
+        // A small step down from 13 used to animate away from the
+        // placeholder view, so this check never saw it. Applying
+        // that step now pushes pins off the map.
+        if (map.getZoom() < 13 && 13 - map.getZoom() > map.options.zoomAnimationThreshold) {
+          map.setZoom(13, { animate: false });
         }
       }
+
+      // Standard OSM tiles. No API key. keepBuffer 0 and idle-only
+      // updates avoid prefetching tiles outside the current view
+      // (OpenStreetMap tile usage policy). One city map at a time.
+      L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a>',
+        keepBuffer: 0,
+        updateWhenIdle: true,
+        updateWhenZooming: false,
+      }).addTo(map);
 
       maps[city] = map;
     }
