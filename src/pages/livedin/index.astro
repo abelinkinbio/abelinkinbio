@@ -1,29 +1,13 @@
 ---
-// ─────────────────────────────────────────────────────────────
-// Lived In — Tabbed City Guide
-//
-// A single page with three tabs: Lisbon (default), D.C., ATX.
-// Each tab shows a Leaflet map, category filters, and review
-// cards for that city.
-//
-// Cards and map popups show the place name and link to a maps
-// search for that name plus city. Coordinates are only used to
-// drop pins. No individual review sub-pages — the card is enough.
-//
-// How it works: All three cities' HTML is rendered at build time.
-// Client-side JS toggles visibility and initializes Leaflet maps.
 // Maps in hidden tabs get invalidateSize() called on tab switch
 // because Leaflet can't measure a hidden container properly.
-// ─────────────────────────────────────────────────────────────
 
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { getCollection } from 'astro:content';
 import { cities } from '../../cities';
 
-// ─── Fetch all reviews ──────────────────────────────────────
 const allReviews = await getCollection('livedin');
 
-// Organize reviews by city, sorted by date (newest first)
 const reviewsByCity: Record<string, typeof allReviews> = {};
 for (const city of cities) {
   reviewsByCity[city.id] = allReviews
@@ -31,13 +15,11 @@ for (const city of cities) {
     .sort((a, b) => b.data.date.getTime() - a.data.date.getTime() || a.data.title.localeCompare(b.data.title));
 }
 
-// Get unique categories per city
 const categoriesByCity: Record<string, string[]> = {};
 for (const city of cities) {
   categoriesByCity[city.id] = [...new Set(reviewsByCity[city.id].map(r => r.data.category))].sort();
 }
 
-// ─── Place names & map links ────────────────────────────────
 // Search labels are what we append so "Liberty" resolves in
 // Lisbon rather than some other city. Coordinates never go in
 // these URLs — they only position pins.
@@ -74,8 +56,6 @@ function placeLinks(
   };
 }
 
-// ─── Map data ───────────────────────────────────────────────
-// Serialize pin data for each city (only reviews with coordinates).
 // lat/lng stay on the pin for Leaflet marker placement and are
 // not rendered in the popup.
 const pinsByCity: Record<string, any[]> = {};
@@ -103,12 +83,10 @@ for (const city of cities) {
 
   <link slot="head" rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 
-  <!-- ─── Page Header ──────────────────────────────────────── -->
   <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: var(--space-lg);">
     <h1>City Guides</h1>
   </div>
 
-  <!-- ─── City Tabs ────────────────────────────────────────── -->
   <div class="city-tabs" style="display: flex; gap: 0; margin-bottom: var(--space-xl); border-bottom: 1px solid var(--color-grid);">
     {cities.map((city, i) => (
       <button
@@ -122,7 +100,6 @@ for (const city of cities) {
     ))}
   </div>
 
-  <!-- ─── Tab Panels ───────────────────────────────────────── -->
   {cities.map((city, i) => {
     const reviews = reviewsByCity[city.id];
     const categories = categoriesByCity[city.id];
@@ -133,13 +110,11 @@ for (const city of cities) {
         data-city={city.id}
         style={i !== 0 ? 'display: none;' : ''}
       >
-        <!-- Map -->
         <div class="map-container panel" style="margin-bottom: var(--space-xl);">
           <span class="panel-label">map · {city.name.toLowerCase()}</span>
           <div id={`map-${city.id}`} class="city-map" style="width: 100%; height: 100%;"></div>
         </div>
 
-        <!-- Category filter tags -->
         {categories.length > 1 && (
           <div style="margin-bottom: var(--space-lg); display: flex; gap: var(--space-xs); flex-wrap: wrap;">
             <button class="tag tag-blue category-filter active" data-city={city.id} data-category="all">
@@ -153,7 +128,6 @@ for (const city of cities) {
           </div>
         )}
 
-        <!-- Reviews grid -->
         <section class="panel">
           <span class="panel-label">spots</span>
           <div class="grid-2">
@@ -190,16 +164,13 @@ for (const city of cities) {
     );
   })}
 
-<!-- Leaflet JS -->
 <script is:inline src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
-<!-- ─── Map + Tab + Filter Logic ─────────────────────────── -->
 <script is:inline data-pins-by-city={JSON.stringify(pinsByCity)}>
   (function() {
     var script = document.currentScript;
     var pinsByCity = JSON.parse(script.getAttribute('data-pins-by-city'));
 
-    // ─── Map Setup ──────────────────────────────────────────
     // Store map instances so we can call invalidateSize on tab switch
     var maps = {};
 
@@ -297,10 +268,8 @@ for (const city of cities) {
       maps[city] = map;
     }
 
-    // Initialize the first (visible) map immediately
     initMap(document.querySelector('.city-tab').getAttribute('data-city'));
 
-    // ─── Tab Switching ──────────────────────────────────────
     var tabs = document.querySelectorAll('.city-tab');
     var panels = document.querySelectorAll('.city-panel');
 
@@ -308,11 +277,9 @@ for (const city of cities) {
       tab.addEventListener('click', function() {
         var city = tab.getAttribute('data-city');
 
-        // Update active tab
         tabs.forEach(function(t) { t.classList.remove('active'); });
         tab.classList.add('active');
 
-        // Show matching panel, hide others
         panels.forEach(function(panel) {
           panel.style.display = panel.getAttribute('data-city') === city ? '' : 'none';
         });
@@ -333,19 +300,16 @@ for (const city of cities) {
       });
     });
 
-    // ─── Category Filtering ─────────────────────────────────
     document.querySelectorAll('.category-filter').forEach(function(btn) {
       btn.addEventListener('click', function() {
         var city = btn.getAttribute('data-city');
         var category = btn.getAttribute('data-category');
 
-        // Update active filter
         document.querySelectorAll('.category-filter[data-city="' + city + '"]').forEach(function(b) {
           b.classList.remove('active');
         });
         btn.classList.add('active');
 
-        // Filter cards
         var panel = document.querySelector('.city-panel[data-city="' + city + '"]');
         if (!panel) return;
 
@@ -361,7 +325,6 @@ for (const city of cities) {
   })();
 </script>
 
-<!-- ─── Styles ─────────────────────────────────────────────── -->
 <style>
   .city-tab {
     font-family: var(--font-body);
@@ -413,7 +376,6 @@ for (const city of cities) {
   .review-card.hidden { display: none; }
 </style>
 
-<!-- ─── Leaflet Blueprint Overrides (global) ──────────────── -->
 <style is:global>
   .map-container > .city-map {
     background: var(--color-bg);

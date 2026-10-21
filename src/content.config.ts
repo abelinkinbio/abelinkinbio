@@ -1,6 +1,5 @@
 import { defineCollection, z } from 'astro:content';
 
-// ─── Blog: Long-form writing ───────────────────────────────
 const blog = defineCollection({
   type: 'content',
   schema: z.object({
@@ -12,9 +11,7 @@ const blog = defineCollection({
   }),
 });
 
-// ─── Lived In: Restaurant & café reviews ────────────────────
-// The "city" field is inferred from the folder structure
-// (lisbon/, dc/, atx/) so you don't need to type it manually.
+// City comes from the folder (lisbon/, dc/, atx/), not a frontmatter field.
 const livedin = defineCollection({
   type: 'content',
   schema: z.object({
@@ -36,7 +33,6 @@ const livedin = defineCollection({
   }),
 });
 
-// ─── Playground: Project dashboard ──────────────────────────
 const playground = defineCollection({
   type: 'content',
   schema: z.object({

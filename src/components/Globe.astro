@@ -1,12 +1,4 @@
 ---
-// ─────────────────────────────────────────────────────────────
-// Globe.astro — Rotating D3 orthographic globe
-//
-// Shows a halftone-dot-filled world with pulsing city beacons.
-// Uses TopoJSON from world-atlas for lightweight map data (~15KB).
-// All rendering happens client-side on a <canvas> element.
-// ─────────────────────────────────────────────────────────────
-
 import { cities } from '../cities';
 
 interface Props {
@@ -41,7 +33,6 @@ const globeCities = cities.map((city) => ({
   var hintEl = document.getElementById('globe-hint');
   var cities = JSON.parse(document.currentScript.getAttribute('data-cities'));
 
-  // Scale canvas for sharp rendering on high-DPI screens
   var dpr = window.devicePixelRatio || 1;
   var cssW = canvas.getAttribute('width') | 0;
   var cssH = canvas.getAttribute('height') | 0;
@@ -69,7 +60,6 @@ const globeCities = cities.map((city) => ({
     return false;
   }
 
-  // Generate halftone dots inside land polygons
   function genDots(features,spacing){
     var dots=[],step=spacing*0.08;
     for(var f=0;f<features.length;f++){var b=d3.geoBounds(features[f]);for(var lng=b[0][0];lng<=b[1][0];lng+=step)for(var lat=b[0][1];lat<=b[1][1];lat+=step)if(inFeature([lng,lat],features[f]))dots.push([lng,lat]);}
@@ -78,18 +68,13 @@ const globeCities = cities.map((city) => ({
 
   function render(){
     ctx.clearRect(0,0,cssW,cssH);
-    // Globe background
     ctx.beginPath();ctx.arc(cxG,cyG,R,0,Math.PI*2);ctx.fillStyle=C.globeBg;ctx.fill();ctx.strokeStyle=C.border;ctx.lineWidth=1;ctx.stroke();
     if(!landGeo)return;
-    // Graticule
     ctx.beginPath();pathGen(d3.geoGraticule().step([30,30])());ctx.strokeStyle=C.grat;ctx.lineWidth=0.5;ctx.stroke();
-    // Coastlines
     ctx.beginPath();landGeo.features.forEach(function(f){pathGen(f);});ctx.strokeStyle=C.coast;ctx.lineWidth=0.5;ctx.stroke();
-    // Land dots with edge fade
     var rot=d3.geoRotation(projection.rotate());
     for(var i=0;i<landDots.length;i++){var proj=projection(landDots[i]);if(!proj)continue;var rp=rot(landDots[i]);var dist=d3.geoDistance(rp,[0,0]);var fade=Math.max(0,1-dist/(Math.PI/2)*1.1);if(fade<0.05)continue;ctx.beginPath();ctx.arc(proj[0],proj[1],1.2,0,Math.PI*2);ctx.fillStyle=C.land;ctx.globalAlpha=fade*0.85;ctx.fill();}
     ctx.globalAlpha=1;
-    // City beacons
     pulse+=0.04;
     for(var ci=0;ci<cities.length;ci++){var city=cities[ci];var cp=projection([city.lng,city.lat]);if(!cp)continue;var cr=rot([city.lng,city.lat]);var cd=d3.geoDistance(cr,[0,0]);if(cd>Math.PI/2)continue;var a=Math.max(0,1-cd/(Math.PI/2)*1.1);var pr=3.5+(Math.sin(pulse)+1)*4;ctx.beginPath();ctx.arc(cp[0],cp[1],pr,0,Math.PI*2);ctx.fillStyle=C.beacon;ctx.globalAlpha=a*Math.max(0,1-pr/14)*0.5;ctx.fill();ctx.beginPath();ctx.arc(cp[0],cp[1],3.5,0,Math.PI*2);ctx.fillStyle=C.beacon;ctx.globalAlpha=a;ctx.fill();if(a>0.4){ctx.font='10px "JetBrains Mono",monospace';ctx.fillStyle=C.beacon;ctx.globalAlpha=a*0.85;ctx.textAlign='left';ctx.fillText(city.name,cp[0]+7,cp[1]+3);}}
     ctx.globalAlpha=1;
@@ -97,7 +82,6 @@ const globeCities = cities.map((city) => ({
 
   function animate(){if(autoRotate){rotation[0]+=0.12;projection.rotate(rotation);}render();requestAnimationFrame(animate);}
 
-  // Drag interaction
   var dragging=false,sx,sy,sr;
   canvas.addEventListener('mousedown',function(e){dragging=true;autoRotate=false;sx=e.clientX;sy=e.clientY;sr=rotation.slice();});
   document.addEventListener('mousemove',function(e){if(!dragging)return;rotation[0]=sr[0]+(e.clientX-sx)*0.4;rotation[1]=sr[1]-(e.clientY-sy)*0.4;rotation[1]=Math.max(-60,Math.min(60,rotation[1]));projection.rotate(rotation);});
