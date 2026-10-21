@@ -1,18 +1,4 @@
 ---
-// ─────────────────────────────────────────────────────────────
-// BadIdeas.astro — Structured card grid → physics collapse
-//
-// Cards look like real project tiles (circular icon + line bars).
-// Clicking any card triggers Matter.js: the entire grid collapses
-// under gravity. Cards tumble, collide, and pile up at the bottom.
-//
-// The trick: we snapshot each card's CSS grid position, switch to
-// absolute positioning, then create Matter.js rigid bodies at
-// those exact coordinates. The user sees no jump — but now physics
-// controls everything.
-// ─────────────────────────────────────────────────────────────
-
-// Lucide-style SVG icons for each project
 const badIdeas = [
   { icon: 'film' },
   { icon: 'coffee' },
@@ -22,7 +8,6 @@ const badIdeas = [
   { icon: 'camera' },
 ];
 
-// Map icon names to SVG path data (Lucide icons)
 const iconPaths: Record<string, string> = {
   film: '<rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"/><line x1="7" y1="2" x2="7" y2="22"/><line x1="17" y1="2" x2="17" y2="22"/><line x1="2" y1="12" x2="22" y2="12"/><line x1="2" y1="7" x2="7" y2="7"/><line x1="2" y1="17" x2="7" y2="17"/><line x1="17" y1="7" x2="22" y2="7"/><line x1="17" y1="17" x2="22" y2="17"/>',
   coffee: '<path d="M17 8h1a4 4 0 1 1 0 8h-1"/><path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4Z"/><line x1="6" y1="2" x2="6" y2="4"/><line x1="10" y1="2" x2="10" y2="4"/><line x1="14" y1="2" x2="14" y2="4"/>',
@@ -87,7 +72,7 @@ const iconPaths: Record<string, string> = {
 
     var containerRect = container.getBoundingClientRect();
 
-    // 1. Snapshot each card's position while still in CSS grid
+    // Snapshot each card while it is still in the grid, so its Matter.js body starts there and the collapse does not jump.
     var snapshots = [];
     cards.forEach(function(card) {
       var rect = card.getBoundingClientRect();
@@ -100,7 +85,6 @@ const iconPaths: Record<string, string> = {
       });
     });
 
-    // 2. Set fixed dimensions for physics container
     var gridH = grid.offsetHeight;
     var gridW = grid.offsetWidth;
     var collapseH = gridH + 80;
@@ -108,7 +92,6 @@ const iconPaths: Record<string, string> = {
     grid.style.height = collapseH + 'px';
     grid.style.width = gridW + 'px';
 
-    // 3. Position cards absolutely at their snapshot positions
     snapshots.forEach(function(s) {
       s.el.style.position = 'absolute';
       s.el.style.width = s.w + 'px';
@@ -119,7 +102,6 @@ const iconPaths: Record<string, string> = {
       s.el.style.pointerEvents = 'none';
     });
 
-    // 4. Create Matter.js world
     var engine = Engine.create({ gravity: { x: 0, y: 1.5 } });
     var wallT = 40;
     var walls = [
@@ -129,7 +111,6 @@ const iconPaths: Record<string, string> = {
     ];
     Composite.add(engine.world, walls);
 
-    // 5. Create rigid bodies for each card
     var bodyPairs = [];
     snapshots.forEach(function(s) {
       var angle = (Math.random() - 0.5) * 0.15;
@@ -144,7 +125,6 @@ const iconPaths: Record<string, string> = {
       bodyPairs.push({ el: s.el, body: body, w: s.w, h: s.h });
     });
 
-    // 6. Run physics and sync HTML positions each frame
     var runner = Runner.create();
     Runner.run(runner, engine);
 
@@ -163,7 +143,6 @@ const iconPaths: Record<string, string> = {
         if (bp.body.speed > 0.1) allSleeping = false;
       }
 
-      // Stop engine once cards settle or after ~5 seconds
       if ((allSleeping && frameCount > 120) || frameCount > 300) {
         Runner.stop(runner);
         return;
@@ -173,7 +152,6 @@ const iconPaths: Record<string, string> = {
     sync();
   }
 
-  // Any card click triggers the collapse
   cards.forEach(function(card) {
     card.addEventListener('click', triggerCollapse);
   });

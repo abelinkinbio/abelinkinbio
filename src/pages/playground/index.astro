@@ -1,8 +1,4 @@
 ---
-// ─────────────────────────────────────────────────────────────
-// Playground — Project dashboard
-// ─────────────────────────────────────────────────────────────
-
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { getCollection } from 'astro:content';
 
@@ -25,7 +21,6 @@ const statusColors: Record<string, string> = {
 <BaseLayout title="Playground" activeNav="playground">
   <h1 style="margin-bottom: var(--space-lg);">Playground</h1>
 
-  <!-- Aggregate stats -->
   <div class="grid-3" style="margin-bottom: var(--space-xl);">
     <div class="panel" style="text-align: center; padding: var(--space-lg) var(--space-sm);">
       <span class="panel-label">building</span>
@@ -44,7 +39,6 @@ const statusColors: Record<string, string> = {
     </div>
   </div>
 
-  <!-- Project cards -->
   <section class="panel">
     <span class="panel-label">projects</span>
     <div class="grid-2">

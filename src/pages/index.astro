@@ -4,20 +4,17 @@ import Globe from '../components/Globe.astro';
 import BadIdeas from '../components/BadIdeas.astro';
 import { getCollection } from 'astro:content';
 
-// Get pinned playground projects (max 2)
 const allProjects = await getCollection('playground', ({ data }) => !data.draft);
 const pinnedProjects = allProjects
   .filter(p => p.data.pinned)
   .sort((a, b) => b.data.date.getTime() - a.data.date.getTime() || a.data.title.localeCompare(b.data.title))
   .slice(0, 2);
 
-// Get recent blog posts (max 4)
 const allPosts = await getCollection('blog', ({ data }) => !data.draft);
 const recentPosts = allPosts
   .sort((a, b) => b.data.date.getTime() - a.data.date.getTime() || a.data.title.localeCompare(b.data.title))
   .slice(0, 4);
 
-// Status tag color
 const statusColors: Record<string, string> = {
   building: 'tag-blue',
   built: 'tag-blue',
@@ -27,7 +24,6 @@ const statusColors: Record<string, string> = {
 
 <BaseLayout title="Home" activeNav="home">
 
-  <!-- ═══ TERMINAL HERO ═══════════════════════════════════════ -->
   <section class="panel section">
     <span class="panel-label">terminal</span>
     <div style="padding: var(--space-sm) 0;">
@@ -41,7 +37,6 @@ const statusColors: Record<string, string> = {
     </div>
   </section>
 
-  <!-- ═══ PLAYGROUND — pinned projects ════════════════════════ -->
   <section class="section">
     <div class="section-header">
       <h2>Playground</h2>
@@ -67,11 +62,9 @@ const statusColors: Record<string, string> = {
     </div>
   </section>
 
-  <!-- ═══ WRITING + CITY GUIDES — side by side ════════════════ -->
   <section class="section">
     <div class="split-section">
 
-      <!-- LEFT: Field Notes -->
       <div>
         <div class="section-header">
           <h2>Field Notes</h2>
@@ -88,7 +81,6 @@ const statusColors: Record<string, string> = {
         </div>
       </div>
 
-      <!-- RIGHT: City Guides globe -->
       <div>
         <div class="section-header">
           <h2>City Guides</h2>
@@ -103,7 +95,6 @@ const statusColors: Record<string, string> = {
     </div>
   </section>
 
-  <!-- ═══ BAD IDEAS — physics collapse ════════════════════════ -->
   <section class="section">
     <div class="section-header">
       <h2>Bad Ideas</h2>
