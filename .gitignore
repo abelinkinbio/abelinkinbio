@@ -16,3 +16,6 @@ node_modules/
 
 # Wrangler
 .wrangler/
+
+# Place catalog bundled into the worker by `astro build`
+.cache/

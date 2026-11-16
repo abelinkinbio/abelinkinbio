@@ -3,8 +3,8 @@
 // Astro configuration for abelinkinbio.com
 //
 // Static output. Astro prerenders every page to HTML, and Cloudflare
-// Workers serves ./dist as static assets. A fully prerendered site
-// does not use an adapter.
+// Workers serves ./dist as static assets. The lived-in ask endpoint
+// is worker/index.ts, not an Astro server route, so there is no adapter.
 // ─────────────────────────────────────────────────────────────
 
 import { defineConfig } from 'astro/config';
