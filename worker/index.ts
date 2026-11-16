@@ -104,6 +104,8 @@ async function askModel(env: Env, prompt: string): Promise<{ id: string; reason:
       chat_template_kwargs: { enable_thinking: false },
       max_tokens: 180,
       temperature: 0.4,
+    }, {
+      gateway: { id: 'livedin' },
     }), 12000);
     return parseModelOutput(result);
   } catch (error) {

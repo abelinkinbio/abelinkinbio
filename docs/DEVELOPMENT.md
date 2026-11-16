@@ -1,6 +1,6 @@
 # Development
 
-Static Astro site (`output: "static"` in `astro.config.mjs`). `npm run deploy` runs `astro build && wrangler deploy`. Cloudflare Workers serves `./dist` as assets (`wrangler.jsonc`, Worker name `abelinkinbio`, `not_found_handling: "404-page"`). `worker/index.ts` handles `POST /api/livedin/recommend` only (`assets.run_worker_first` is `/api/*`). `astro build` writes `.cache/livedin-catalog.json` from the lived-in collection; the worker bundles that file, so build before `wrangler dev` or `wrangler deploy`.
+Static Astro site (`output: "static"` in `astro.config.mjs`). `npm run deploy` runs `astro build && wrangler deploy`. Cloudflare Workers serves `./dist` as assets (`wrangler.jsonc`, Worker name `abelinkinbio`, `not_found_handling: "404-page"`). `worker/index.ts` handles `POST /api/livedin/recommend` only (`assets.run_worker_first` is `/api/*`). `astro build` writes `.cache/livedin-catalog.json` from the lived-in collection; the worker bundles that file, so build before `wrangler dev` or `wrangler deploy`. `askModel` sends that Workers AI call through AI Gateway `livedin` (create that gateway first; only id `default` is auto-created), including on the `previews` AI binding.
 
 `src/styles/blueprint.css` is the only theme (cream paper, blue grid, black accents). No dark mode.
 
