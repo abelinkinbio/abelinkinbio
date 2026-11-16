@@ -61,5 +61,22 @@
       "enabled": true,
       "head_sampling_rate": 0.01
     }
+  },
+
+  // Preview builds (`wrangler preview`) do not inherit top-level bindings.
+  "previews": {
+    "ai": {
+      "binding": "AI"
+    },
+    "ratelimits": [
+      {
+        "name": "RECOMMEND_LIMIT",
+        "namespace_id": "847211",
+        "simple": {
+          "limit": 12,
+          "period": 60
+        }
+      }
+    ]
   }
 }
