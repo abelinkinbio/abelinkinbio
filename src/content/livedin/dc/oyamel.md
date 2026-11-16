@@ -3,7 +3,7 @@ title: "Oyamel"
 description: "Placeholder text for now"
 date: 2021-06-13
 emoji: "🌮"
-category: "tacos"
+category: "dinner"
 tags: ["tacos"]
 coordinates:
   lat: 38.896

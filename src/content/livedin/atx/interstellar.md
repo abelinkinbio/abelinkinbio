@@ -3,7 +3,7 @@ title: "Interstellar"
 description: "Sit down and enjoy some Austin BBQ"
 date: 2021-06-15
 emoji: "🪵"
-category: "bbq"
+category: "dinner"
 tags: ["bbq"]
 coordinates:
   lat: 30.4615

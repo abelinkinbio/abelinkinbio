@@ -3,7 +3,7 @@ title: "Chupacabra"
 description: "Grab and go tacos on H Street"
 date: 2021-06-13
 emoji: "🌮"
-category: "tacos"
+category: "dinner"
 tags: ["tacos", "h-street"]
 coordinates:
   lat: 38.8805

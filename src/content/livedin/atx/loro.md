@@ -3,7 +3,7 @@ title: "Loro"
 description: "Quick midday fusion BBQ"
 date: 2021-06-15
 emoji: "🪵"
-category: "bbq"
+category: "dinner"
 tags: ["bbq", "south"]
 coordinates:
   lat: 30.2477

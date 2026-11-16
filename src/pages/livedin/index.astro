@@ -38,9 +38,9 @@ for (const city of cities) {
 }
 
 // ─── Place names & map links ────────────────────────────────
-// Search labels are what we append so "Liberty" resolves in
-// Lisbon rather than some other city. Coordinates never go in
-// these URLs — they only position pins.
+// A per-entry place URL opens that business. Entries without
+// one fall back to a name-plus-city search. Coordinates only
+// position the Leaflet pin.
 function mapSearchQuery(name: string, city: string): string {
   const match = cities.find((entry) => entry.id === city);
   return `${name}, ${match ? match.query : city}`;
@@ -61,6 +61,8 @@ function osmSearchUrl(query: string): string {
 function placeLinks(
   data: {
     title: string;
+    googleMaps?: string;
+    appleMaps?: string;
   },
   city: string,
 ) {
@@ -68,8 +70,8 @@ function placeLinks(
   const query = mapSearchQuery(name, city);
   return {
     name,
-    mapsUrl: googleMapsSearchUrl(query),
-    appleMapsUrl: appleMapsSearchUrl(query),
+    mapsUrl: data.googleMaps || googleMapsSearchUrl(query),
+    appleMapsUrl: data.appleMaps || appleMapsSearchUrl(query),
     osmUrl: osmSearchUrl(query),
   };
 }

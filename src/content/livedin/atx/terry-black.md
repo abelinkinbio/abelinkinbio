@@ -3,7 +3,7 @@ title: "Terry Black's"
 description: "Grab-and-go Texas BBQ"
 date: 2021-06-15
 emoji: "🪵"
-category: "bbq"
+category: "dinner"
 tags: ["bbq", "south", "top-10"]
 coordinates:
   lat: 30.2597

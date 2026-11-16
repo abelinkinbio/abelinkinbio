@@ -57,9 +57,8 @@ Schemas live in `src/content.config.ts`. `draft: true` is omitted from every pag
 
 - `title`, `description`, `date` (required)
 - `emoji`: string, default `📍`
-- `category`: `coffee`, `dinner`, `drinks`, `bbq`, `pizza`, `tacos`, `ramen`, `brunch`, `bar`, `bakery`, `dessert`, `lunch`, `sushi`, `burger`, or `other` (default)
+- `category`: `dinner`, `date-nite`, `late-nite`, `coffee`, `breakfast`, `lunch`, `drinks`, `delivery`, or `misc` (default)
 - `coordinates`: optional `{ lat, lng }`, used only to drop the map pin
-- `tags`: string array, default `[]` (not shown on the card)
+- `googleMaps`, `appleMaps`: optional place URLs. Without one, that link is a name-plus-city search
+- `tags`: string array, default `[]`. Stored for later. Not rendered
 - `draft`: boolean, default `false`
-
-Map links are searches built from the title and city.

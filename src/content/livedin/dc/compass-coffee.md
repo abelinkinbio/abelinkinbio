@@ -4,7 +4,7 @@ description: "Tons of locations across town with great speciality coffee"
 date: 2021-06-13
 emoji: "☕️"
 category: "coffee"
-tags: ["coffee", "downtown"]
+tags: ["downtown"]
 coordinates:
   lat: 38.9106
   lng: -77.0218

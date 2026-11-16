@@ -4,7 +4,7 @@ description: "Go-to date-nite spot"
 date: 2021-06-13
 emoji: "🍽️"
 category: "dinner"
-tags: ["date-nite", "drinks"]
+tags: ["date-nite"]
 coordinates:
   lat: 38.9063
   lng: -77.0245
