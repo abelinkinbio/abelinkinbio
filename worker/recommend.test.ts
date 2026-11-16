@@ -28,6 +28,7 @@ function ask(partial: Partial<AskInput> = {}): AskInput {
     mood: '',
     hour: 21,
     weekday: 5,
+    city: null,
     from: null,
     exclude: [],
     adjust: null,
@@ -61,19 +62,18 @@ test('morning keeps coffee and drops dinner', () => {
   assert.ok(picked.every((item) => item.category === 'coffee'));
 });
 
-test('late night keeps the late-nite tag', () => {
+test('late night keeps late-nite, delivery, and drinks', () => {
   const places = [
-    place({ id: 'dc/copycat', name: 'Copycat Co.', category: 'dinner', city: 'dc', tags: ['late-nite'] }),
-    place({ id: 'dc/royal', name: 'The Royal', category: 'bar', city: 'dc', tags: ['late-nite'] }),
-    place({ id: 'dc/wise', name: 'Wise Guys', category: 'pizza', city: 'dc', tags: ['late-nite'] }),
+    place({ id: 'dc/copycat', name: 'Copycat Co.', category: 'late-nite', city: 'dc', tags: ['late-nite'] }),
+    place({ id: 'dc/wise', name: 'Wise Guys', category: 'delivery', city: 'dc' }),
     place({ id: 'dc/chaplains', name: 'Chaplains', category: 'drinks', city: 'dc' }),
     place({ id: 'dc/lunch', name: 'Lunch Spot', category: 'lunch', city: 'dc' }),
   ];
-  const picked = selectCandidates(places, ask({ hour: 23 }));
-  assert.deepEqual(picked.map((item) => item.id).sort(), ['dc/chaplains', 'dc/copycat', 'dc/royal', 'dc/wise']);
+  const picked = selectCandidates(places, ask({ hour: 23, city: 'dc' }));
+  assert.deepEqual(picked.map((item) => item.id).sort(), ['dc/chaplains', 'dc/copycat', 'dc/wise']);
 });
 
-test('pizza in the morning still returns pizza', () => {
+test('lunch in the text is kept in the morning', () => {
   const places = [
     ...Array.from({ length: 6 }, (_, i) => place({
       id: `atx/coffee-${i}`,
@@ -81,20 +81,57 @@ test('pizza in the morning still returns pizza', () => {
       category: 'coffee',
       city: 'atx',
     })),
-    place({ id: 'atx/via-313', name: 'Via 313', category: 'pizza', city: 'atx', tags: ['pizza'] }),
+    place({ id: 'atx/lunch', name: 'Lunch Spot', category: 'lunch', city: 'atx' }),
   ];
-  const picked = selectCandidates(places, ask({ hour: 8, mood: 'pizza please' }));
-  assert.deepEqual(picked.map((item) => item.id), ['atx/via-313']);
+  const picked = selectCandidates(places, ask({ hour: 8, mood: 'lunch please', city: 'atx' }));
+  assert.deepEqual(picked.map((item) => item.id), ['atx/lunch']);
 });
 
-test('a named area tag narrows the list', () => {
+test('a named area tag narrows the list to that city', () => {
   const places = [
     place({ id: 'lisbon/calmo', name: 'Calmo', category: 'coffee', city: 'lisbon', tags: ['lapa'] }),
     place({ id: 'lisbon/da-noi', name: 'Da Noi', category: 'dinner', city: 'lisbon', tags: ['lapa', 'late-nite'] }),
     place({ id: 'atx/cenote', name: 'Cenote', category: 'coffee', city: 'atx', tags: ['east'] }),
   ];
-  const picked = selectCandidates(places, ask({ mood: 'something in lapa' }));
-  assert.deepEqual(picked.map((item) => item.id).sort(), ['lisbon/calmo', 'lisbon/da-noi']);
+  const picked = selectCandidates(places, ask({ mood: 'something in lapa', hour: 12 }));
+  assert.ok(picked.every((item) => item.city === 'lisbon'));
+  assert.ok(picked.some((item) => item.id === 'lisbon/calmo'));
+});
+
+const LATE = new Set(['late-nite', 'delivery', 'drinks']);
+
+function samplePlaces(): CatalogPlace[] {
+  return [
+    place({ id: 'atx/easy-tiger', name: 'Easy Tiger', category: 'drinks', city: 'atx', tags: ['drinks'] }),
+    place({ id: 'dc/copycat', name: 'Copycat Co.', category: 'late-nite', city: 'dc', tags: ['late-nite'] }),
+    place({ id: 'lisbon/buna', name: 'Buna', category: 'coffee', city: 'lisbon', tags: ['coffee', 'são-bento'] }),
+    place({ id: 'lisbon/da-noi', name: 'Da Noi', category: 'late-nite', city: 'lisbon', tags: ['late-nite', 'lapa'] }),
+    place({ id: 'lisbon/skizzo', name: 'Skizzo', category: 'drinks', city: 'lisbon', tags: ['late-nite', 'lapa'] }),
+    place({ id: 'lisbon/bite', name: 'Quick Bite', category: 'delivery', city: 'lisbon', tags: ['delivery'] }),
+  ];
+}
+
+test('the sample prompt picks a Lisbon late-nite-appropriate place', () => {
+  const places = samplePlaces();
+  const input = ask({ mood: SAMPLE, hour: 15, weekday: 1, city: 'atx' });
+  const candidates = selectCandidates(places, input);
+  assert.ok(candidates.every((item) => item.city === 'lisbon'));
+  assert.ok(candidates.every((item) => LATE.has(item.category)));
+  const first = resolve(candidates, input, null);
+  assert.equal(first?.place.city, 'lisbon');
+  assert.ok(LATE.has(first?.place.category ?? ''));
+  assert.notEqual(first?.place.id, 'atx/easy-tiger');
+  assert.notEqual(first?.place.id, 'dc/copycat');
+
+  const again = ask({
+    ...input,
+    adjust: 'closer',
+    exclude: [first!.place.id],
+  });
+  const next = resolve(selectCandidates(places, again), again, null);
+  assert.equal(next?.place.city, 'lisbon');
+  assert.notEqual(next?.place.id, first?.place.id);
+  assert.ok(LATE.has(next?.place.category ?? ''));
 });
 
 test('the sample line is conversation, with tags and no distance', () => {

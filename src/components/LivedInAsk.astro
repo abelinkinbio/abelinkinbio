@@ -21,6 +21,8 @@ const catalog = reviews
     tags: review.data.tags,
     city: review.id.split('/')[0],
     description: review.data.description,
+    ...(review.data.googleMaps ? { googleMaps: review.data.googleMaps } : {}),
+    ...(review.data.appleMaps ? { appleMaps: review.data.appleMaps } : {}),
   }))
   .sort((a, b) => a.id.localeCompare(b.id));
 
@@ -75,7 +77,7 @@ writeFileSync(join(cacheDir, 'livedin-catalog.json'), JSON.stringify(catalog));
     var result = form.querySelector('.ask-result');
     var follow = form.querySelector('.ask-follow');
     var status = form.querySelector('.ask-status');
-    var state = { mood: '', exclude: [] };
+    var state = { mood: '', exclude: [], city: null };
     var inFlight = false;
 
     function setStatus(message, isError) {
@@ -148,17 +150,17 @@ writeFileSync(join(cacheDir, 'livedin-catalog.json'), JSON.stringify(catalog));
       });
     }
 
+    function selectedCity() {
+      var tab = document.querySelector('.city-tab.active');
+      return tab ? tab.getAttribute('data-city') : null;
+    }
+
     function renderPlace(place, reason) {
       var card = el('article', 'card ask-card');
-      var top = el('div', 'ask-card-top');
       var title = link(place.mapsUrl, (place.emoji ? place.emoji + ' ' : '') + place.name);
       title.className = 'card-title';
-      top.append(title);
-      top.append(el('span', 'tag', place.category));
-      if (place.area) top.append(el('span', 'tag', place.area));
-      card.append(top);
+      card.append(title);
       card.append(el('p', 'ask-reason', reason));
-      if (place.description) card.append(el('p', 'card-description ask-desc', place.description));
 
       var pageBtn = el('button', 'ask-textbtn', 'on this page');
       pageBtn.type = 'button';
@@ -184,11 +186,13 @@ writeFileSync(join(cacheDir, 'livedin-catalog.json'), JSON.stringify(catalog));
       var follow = kind === 'closer' || kind === 'farther' || kind === 'other';
       var mood = kind === 'sample' ? SAMPLE : follow ? state.mood : (kind === 'surprise' ? '' : input.value.trim());
       var exclude = follow ? state.exclude.slice() : [];
+      if (!follow) state.city = selectedCity();
       var payload = {
         mood: mood,
         time: { hour: new Date().getHours(), weekday: new Date().getDay() },
         exclude: exclude,
         adjust: follow ? kind : null,
+        city: state.city,
       };
       var from = fromPath();
       if (from) payload.from = from;

@@ -3,8 +3,6 @@ import { cities } from '../src/cities.ts';
 export const MAX_MOOD = 240;
 export const MAX_EXCLUDE = 40;
 export const MAX_CANDIDATES = 24;
-const MIN_TIME_MATCHES = 4;
-
 const CITY_IDS = new Set(cities.map((city) => city.id));
 const ID_RE = /^[a-z0-9]+\/[a-z0-9-]+$/;
 
@@ -27,12 +25,15 @@ export type CatalogPlace = {
   tags: string[];
   city: string;
   description: string;
+  googleMaps?: string;
+  appleMaps?: string;
 };
 
 export type AskInput = {
   mood: string;
   hour: number;
   weekday: number;
+  city: string | null;
   from: string | null;
   exclude: string[];
   adjust: Adjust | null;
@@ -44,23 +45,17 @@ export type Resolved = {
   source: 'model' | 'fallback';
 };
 
-type MoodRule = { test: RegExp; categories: string[]; tags: string[] };
+const LATE_CATEGORIES = ['late-nite', 'delivery', 'drinks'];
 
-const MOOD_RULES: MoodRule[] = [
-  { test: /\b(coffee|cafe|espresso)\b/i, categories: ['coffee'], tags: [] },
-  { test: /\b(breakfast|brunch)\b/i, categories: ['brunch', 'bakery', 'coffee'], tags: [] },
-  { test: /\bpizzas?\b/i, categories: ['pizza'], tags: ['pizza'] },
-  { test: /\btacos?\b/i, categories: ['tacos'], tags: [] },
-  { test: /\bramen\b/i, categories: ['ramen'], tags: [] },
-  { test: /\bsushi\b/i, categories: ['sushi'], tags: [] },
-  { test: /\bburgers?\b/i, categories: ['burger'], tags: [] },
-  { test: /\b(bbq|barbecue)\b/i, categories: ['bbq'], tags: [] },
-  { test: /\b(cocktails?|drinks?|beer|wine|nightcap)\b/i, categories: ['bar', 'drinks'], tags: [] },
-  { test: /\bbar\b/i, categories: ['bar', 'drinks'], tags: [] },
-  { test: /\b(dessert|pastry|pastries|bakery)\b/i, categories: ['dessert', 'bakery'], tags: [] },
-  { test: /\bdinner\b/i, categories: ['dinner'], tags: [] },
-  { test: /\blunch\b/i, categories: ['lunch'], tags: [] },
-  { test: /\blate[- ]?n(?:ite|ight)\b/i, categories: ['bar', 'drinks'], tags: ['late-nite'] },
+const AREA_TO_CITY: { test: RegExp; city: string }[] = [
+  { test: /\bpr[ií]ncipe\s+real\b|\bprincipe\s+real\b/i, city: 'lisbon' },
+  { test: /\b(lisbon|lisboa)\b/i, city: 'lisbon' },
+  { test: /\b(lapa|chiado|s[aã]o[- ]?bento|alfama|bairro\s+alto|baixa|santos|estrela|mouraria|gra[cç]a)\b/i, city: 'lisbon' },
+  { test: /\b(east\s+austin|south\s+congress|so[- ]?co|rainey)\b/i, city: 'atx' },
+  { test: /\b(austin|atx)\b/i, city: 'atx' },
+  { test: /\b(georgetown|h[- ]street|logan[- ]circle|mount[- ]vernon|shaw|u[- ]street|adams[- ]morgan|dupont)\b/i, city: 'dc' },
+  { test: /\b(washington|d\.c\.?)\b/i, city: 'dc' },
+  { test: /\bdc\b/i, city: 'dc' },
 ];
 
 const DAYS = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
@@ -83,8 +78,8 @@ export function areaQuery(cityId: string): string {
 export function mapLinks(place: CatalogPlace): { mapsUrl: string; appleMapsUrl: string } {
   const query = `${place.name}, ${areaQuery(place.city)}`;
   return {
-    mapsUrl: `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`,
-    appleMapsUrl: `https://maps.apple.com/?q=${encodeURIComponent(query)}`,
+    mapsUrl: place.googleMaps || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`,
+    appleMapsUrl: place.appleMaps || `https://maps.apple.com/?q=${encodeURIComponent(query)}`,
   };
 }
 
@@ -105,6 +100,8 @@ export function loadCatalog(raw: unknown): CatalogPlace[] {
       tags,
       city: row.city,
       description: typeof row.description === 'string' ? row.description : '',
+      ...(typeof row.googleMaps === 'string' ? { googleMaps: row.googleMaps } : {}),
+      ...(typeof row.appleMaps === 'string' ? { appleMaps: row.appleMaps } : {}),
     });
   }
   return places;
@@ -140,6 +137,9 @@ export function parseBody(raw: unknown): { ok: true; value: AskInput } | { ok: f
     return { ok: false, error: 'need a weekday from 0 to 6' };
   }
 
+  let city: string | null = null;
+  if (typeof body.city === 'string' && CITY_IDS.has(body.city)) city = body.city;
+
   let from: string | null = null;
   if (typeof body.from === 'string' && body.from.length <= 200 && /^\/[A-Za-z0-9/_\-.]*$/.test(body.from) && !body.from.includes('..')) {
     from = body.from;
@@ -162,34 +162,24 @@ export function parseBody(raw: unknown): { ok: true; value: AskInput } | { ok: f
     adjust = body.adjust;
   }
 
-  return { ok: true, value: { mood, hour, weekday, from, exclude, adjust } };
+  return { ok: true, value: { mood, hour, weekday, city, from, exclude, adjust } };
 }
 
 export function selectCandidates(places: CatalogPlace[], input: AskInput): CatalogPlace[] {
   const excluded = new Set(input.exclude);
   let pool = places.filter((place) => CITY_IDS.has(place.city) && !excluded.has(place.id));
 
-  const named = cityFromMood(input.mood);
+  const named = cityFromText(input.mood, places) ?? input.city;
   if (named) {
     const inCity = pool.filter((place) => place.city === named);
     if (inCity.length) pool = inCity;
   }
 
-  const keyed = moodMatches(pool, input.mood);
-  const areas = areaTagHits(pool, input.mood);
-  if (keyed && keyed.length && areas.length) {
-    const both = keyed.filter((place) => areas.some((hit) => hit.id === place.id));
-    pool = both.length ? both : keyed;
-  } else if (keyed && keyed.length) {
-    pool = keyed;
-  } else if (areas.length) {
-    pool = areas;
-  } else if (keyed && keyed.length === 0) {
-    const timed = timeMatches(pool, hourForFilter(input));
-    pool = timed.length >= MIN_TIME_MATCHES ? timed : pool;
-  } else {
-    const timed = timeMatches(pool, hourForFilter(input));
-    if (timed.length >= MIN_TIME_MATCHES) pool = timed;
+  const preferred = preferredCategories(input);
+  if (preferred) {
+    const allowed = new Set(preferred);
+    const timed = pool.filter((place) => allowed.has(place.category) || place.tags.some((tag) => allowed.has(tag)));
+    if (timed.length) pool = timed;
   }
 
   const ordered = [...pool].sort((a, b) => a.id.localeCompare(b.id));
@@ -198,6 +188,11 @@ export function selectCandidates(places: CatalogPlace[], input: AskInput): Catal
 
 export function buildPrompt(candidates: CatalogPlace[], input: AskInput): string {
   const lines = [`Local time: ${timePhrase(input.hour, input.weekday)}.`];
+  if (textSaysLate(input.mood)) {
+    lines.push('The text says late night. Favor late-nite, delivery, and drinks, not the browser clock.');
+  }
+  const city = cityFromText(input.mood, []) ?? input.city;
+  if (city) lines.push(`Stay in ${areaName(city)}.`);
   lines.push(input.mood ? `They wrote: ${input.mood}` : 'They wrote: surprise me.');
   if (input.from) lines.push(`Came from: ${input.from}`);
   if (input.adjust === 'closer') {
@@ -271,7 +266,7 @@ export function toClient(resolved: Resolved): {
 
 export function fallbackReason(place: CatalogPlace, input: AskInput): string {
   const where = areaName(place.city);
-  const when = whenClause(input.hour, input.weekday);
+  const when = whenClause(textSaysLate(input.mood) ? 23 : input.hour, input.weekday);
   if (input.adjust === 'closer' || input.adjust === 'farther') {
     return `${place.name} is another ${place.category} option in ${where}.`;
   }
@@ -293,64 +288,42 @@ function whenClause(hour: number, weekday: number): string {
   return `a ${day} ${part}`;
 }
 
-function hourForFilter(input: AskInput): number {
-  if (/\b(midnight|late|nightcap)\b/i.test(input.mood)) return 23;
-  if (/\b(morning|breakfast)\b/i.test(input.mood)) return 8;
-  if (/\bafternoon\b/i.test(input.mood)) return 15;
-  if (/\b(evening|tonight)\b/i.test(input.mood)) return 19;
-  return input.hour;
+function textSaysLate(mood: string): boolean {
+  return /\b(midnight|late[- ]?nite|late night|after hours|nightcap)\b/i.test(mood);
 }
 
-function cityFromMood(mood: string): string | null {
-  if (/\baustin\b|\batx\b/i.test(mood)) return 'atx';
-  if (/\blisbon\b|\blisboa\b/i.test(mood)) return 'lisbon';
-  if (/\bwashington\b|\bd\.c\.?\b|\bdc\b/i.test(mood)) return 'dc';
-  return null;
-}
-
-function moodMatches(pool: CatalogPlace[], mood: string): CatalogPlace[] | null {
-  if (!mood) return null;
-  const categories = new Set<string>();
-  const tags = new Set<string>();
-  let hit = false;
-  for (const rule of MOOD_RULES) {
-    if (!rule.test.test(mood)) continue;
-    hit = true;
-    for (const category of rule.categories) categories.add(category);
-    for (const tag of rule.tags) tags.add(tag);
+function cityFromText(mood: string, places: CatalogPlace[]): string | null {
+  for (const area of AREA_TO_CITY) {
+    if (area.test.test(mood)) return area.city;
   }
-  if (!hit) return null;
-  return pool.filter((place) => placeMatches(place, categories, tags));
-}
-
-function areaTagHits(pool: CatalogPlace[], mood: string): CatalogPlace[] {
   const whole = norm(mood);
-  const tokens = mood.split(/[^a-z0-9]+/i).map((token) => norm(token)).filter((token) => token.length >= 4);
-  if (whole.length < 4 && !tokens.length) return [];
-  return pool.filter((place) => place.tags.some((tag) => {
-    const normalized = norm(tag);
-    if (normalized.length < 4) return false;
-    if (whole.includes(normalized)) return true;
-    return tokens.some((token) => token === normalized || normalized.includes(token) || token.includes(normalized));
-  }));
+  const hits = new Set<string>();
+  for (const place of places) {
+    for (const tag of place.tags) {
+      const normalized = norm(tag);
+      if (normalized.length < 4) continue;
+      if (whole.includes(normalized)) hits.add(place.city);
+    }
+  }
+  return hits.size === 1 ? [...hits][0] : null;
 }
 
-function timeMatches(pool: CatalogPlace[], hour: number): CatalogPlace[] {
-  const rule = timeRule(hour);
-  return pool.filter((place) => placeMatches(place, new Set(rule.categories), new Set(rule.tags)));
+function preferredCategories(input: AskInput): string[] | null {
+  if (textSaysLate(input.mood)) return LATE_CATEGORIES;
+  if (/\b(breakfast|morning)\b/i.test(input.mood)) return ['breakfast', 'coffee'];
+  if (/\blunch\b/i.test(input.mood)) return ['lunch'];
+  if (/\bdinner\b/i.test(input.mood)) return ['dinner', 'date-nite'];
+  if (/\bcoffee\b/i.test(input.mood)) return ['coffee', 'breakfast'];
+  if (/\bdrinks?\b/i.test(input.mood)) return ['drinks', 'late-nite', 'date-nite'];
+  return categoriesForHour(input.hour);
 }
 
-function timeRule(hour: number): { categories: string[]; tags: string[] } {
-  if (hour >= 22 || hour < 5) return { categories: ['bar', 'drinks'], tags: ['late-nite'] };
-  if (hour < 11) return { categories: ['coffee', 'bakery', 'brunch'], tags: [] };
-  if (hour < 15) return { categories: ['lunch', 'coffee', 'burger', 'tacos', 'pizza', 'bakery'], tags: [] };
-  if (hour < 17) return { categories: ['coffee', 'dessert', 'bakery'], tags: [] };
-  return { categories: ['dinner', 'sushi', 'pizza', 'tacos', 'bbq', 'ramen', 'burger', 'drinks'], tags: [] };
-}
-
-function placeMatches(place: CatalogPlace, categories: Set<string>, tags: Set<string>): boolean {
-  if (categories.has(place.category)) return true;
-  return place.tags.some((tag) => tags.has(tag));
+function categoriesForHour(hour: number): string[] {
+  if (hour >= 22 || hour < 5) return LATE_CATEGORIES;
+  if (hour < 11) return ['coffee', 'breakfast'];
+  if (hour < 15) return ['lunch', 'coffee'];
+  if (hour < 17) return ['coffee'];
+  return ['dinner', 'date-nite', 'drinks'];
 }
 
 function capDiverse(places: CatalogPlace[], limit: number): CatalogPlace[] {
