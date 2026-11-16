@@ -6,7 +6,8 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "deploy": "astro build && wrangler deploy"
+    "deploy": "astro build && wrangler deploy",
+    "test": "node --experimental-strip-types --test worker/recommend.test.ts"
   },
   "dependencies": {
     "astro": "^5.0.0"

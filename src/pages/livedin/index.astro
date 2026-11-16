@@ -17,6 +17,7 @@
 // ─────────────────────────────────────────────────────────────
 
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import LivedInAsk from '../../components/LivedInAsk.astro';
 import { getCollection } from 'astro:content';
 import { cities } from '../../cities';
 
@@ -109,6 +110,8 @@ for (const city of cities) {
   <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: var(--space-lg);">
     <h1>City Guides</h1>
   </div>
+
+  <LivedInAsk />
 
   <!-- ─── City Tabs ────────────────────────────────────────── -->
   <div class="city-tabs" style="display: flex; gap: 0; margin-bottom: var(--space-xl); border-bottom: 1px solid var(--color-grid);">
