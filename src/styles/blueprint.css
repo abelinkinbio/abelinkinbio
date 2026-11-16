@@ -145,14 +145,50 @@ article { max-width: none; }
 .globe-loading { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 0.65rem; color: var(--color-muted); text-transform: uppercase; letter-spacing: 0.1em; }
 .globe-hint { font-size: 0.55rem; color: var(--color-grid); text-transform: uppercase; letter-spacing: 0.1em; margin-top: var(--space-xs); text-align: center; }
 
-/* ─── BAD IDEAS — grid → physics collapse ──────────────────── */
+/* ─── BAD IDEAS — grid that drops into a bouncy tray ───────── */
 .bad-ideas-container { position: relative; }
-.bad-ideas-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-md); }
-.bad-ideas-grid.collapsed { display: block; overflow: hidden; }
-.bad-ideas-grid.collapsed .bi-card { position: absolute; pointer-events: none; }
-.bi-card { border: 1px solid var(--color-border); background: var(--color-bg); padding: 14px 16px; cursor: pointer; transition: border-color var(--transition-fast); user-select: none; }
-.bi-card:hover { border-color: var(--color-text); }
-.bi-card-inner { display: flex; align-items: center; gap: 12px; }
+.bad-ideas-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-md);
+  /* Fall room is reserved up front so a collapse never pushes the footer. */
+  padding-bottom: 168px;
+}
+.bad-ideas-grid.collapsed { position: relative; display: block; overflow: hidden; touch-action: pan-y; }
+.bi-card {
+  appearance: none;
+  -webkit-appearance: none;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  width: 100%;
+  min-width: 0;
+  border: 1px solid var(--color-border);
+  background: var(--color-bg);
+  padding: 14px 16px;
+  cursor: grab;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
+  transform-origin: center center;
+  transition: transform 0.48s cubic-bezier(0.34, 1.45, 0.64, 1), border-color var(--transition-fast);
+}
+.bi-card:hover { border-color: var(--color-text); transform: translateY(-10px) rotate(-0.8deg) scale(1.06, 0.92); }
+.bi-card:active { transform: translateY(3px) rotate(0.6deg) scale(1.12, 0.84); transition-duration: 0.08s; }
+.bi-card:focus-visible { outline: 2px solid var(--color-interactive); outline-offset: 3px; }
+.bad-ideas-grid.collapsed .bi-card {
+  position: absolute;
+  margin: 0;
+  cursor: grab;
+  touch-action: none;
+  transition: none;
+  will-change: transform;
+}
+.bad-ideas-grid.collapsed .bi-card:hover,
+.bad-ideas-grid.collapsed .bi-card:active { transform: none; }
+.bad-ideas-grid.collapsed .bi-card.is-held { cursor: grabbing; border-color: var(--color-text); z-index: 6; }
+.bi-card-inner { display: flex; align-items: center; gap: 12px; pointer-events: none; }
 .bi-card-icon { width: 36px; height: 36px; border-radius: 50%; border: 1px solid var(--color-border); display: flex; align-items: center; justify-content: center; flex-shrink: 0; color: var(--color-grid); }
 .bi-card-icon svg { width: 18px; height: 18px; }
 .bi-card-lines { flex: 1; display: flex; flex-direction: column; gap: 5px; }
@@ -160,12 +196,32 @@ article { max-width: none; }
 .bi-card-line:nth-child(1) { width: 70%; }
 .bi-card-line:nth-child(2) { width: 90%; }
 .bi-card-line:nth-child(3) { width: 50%; }
+.bi-sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+@media (prefers-reduced-motion: reduce) {
+  .bad-ideas-grid { padding-bottom: 0; }
+  .bi-card,
+  .bi-card:hover,
+  .bi-card:active {
+    transform: none;
+    transition: border-color var(--transition-fast);
+  }
+}
 
 /* ─── RESPONSIVE ────────────────────────────────────────────── */
 @media (max-width: 768px) {
   .grid-2, .grid-3 { grid-template-columns: 1fr 1fr; }
   .split-section { grid-template-columns: 1fr; }
-  .bad-ideas-grid { grid-template-columns: repeat(2, 1fr); }
+  .bad-ideas-grid { grid-template-columns: repeat(2, 1fr); padding-bottom: 112px; }
   .site-header-inner { flex-direction: column; align-items: flex-start; gap: var(--space-md); }
   .nav { flex-wrap: wrap; gap: var(--space-md); }
   h1 { font-size: 2rem; } h2 { font-size: 1.5rem; }

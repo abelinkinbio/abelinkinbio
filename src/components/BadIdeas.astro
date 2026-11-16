@@ -1,28 +1,25 @@
 ---
 // ─────────────────────────────────────────────────────────────
-// BadIdeas.astro — Structured card grid → physics collapse
+// BadIdeas.astro — a tray of cards you can drop, grab, and throw
 //
-// Cards look like real project tiles (circular icon + line bars).
-// Clicking any card triggers Matter.js: the entire grid collapses
-// under gravity. Cards tumble, collide, and pile up at the bottom.
+// The grid stays put until someone grabs a card (or activates it
+// from the keyboard). Matter.js then owns the same rectangle: the
+// cards tumble into a pile, bounce off each other and the walls,
+// and stay grabbable. Nothing below the section moves, and the
+// engine stops when the pile is asleep or offscreen.
 //
-// The trick: we snapshot each card's CSS grid position, switch to
-// absolute positioning, then create Matter.js rigid bodies at
-// those exact coordinates. The user sees no jump — but now physics
-// controls everything.
+// prefers-reduced-motion leaves the grid alone.
 // ─────────────────────────────────────────────────────────────
 
-// Lucide-style SVG icons for each project
 const badIdeas = [
-  { icon: 'film' },
-  { icon: 'coffee' },
-  { icon: 'cloud' },
-  { icon: 'music' },
-  { icon: 'download' },
-  { icon: 'camera' },
+  { icon: 'film', label: 'Film' },
+  { icon: 'coffee', label: 'Coffee' },
+  { icon: 'cloud', label: 'Cloud' },
+  { icon: 'music', label: 'Music' },
+  { icon: 'download', label: 'Download' },
+  { icon: 'camera', label: 'Camera' },
 ];
 
-// Map icon names to SVG path data (Lucide icons)
 const iconPaths: Record<string, string> = {
   film: '<rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"/><line x1="7" y1="2" x2="7" y2="22"/><line x1="17" y1="2" x2="17" y2="22"/><line x1="2" y1="12" x2="22" y2="12"/><line x1="2" y1="7" x2="7" y2="7"/><line x1="2" y1="17" x2="7" y2="17"/><line x1="17" y1="7" x2="22" y2="7"/><line x1="17" y1="17" x2="22" y2="17"/>',
   coffee: '<path d="M17 8h1a4 4 0 1 1 0 8h-1"/><path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4Z"/><line x1="6" y1="2" x2="6" y2="4"/><line x1="10" y1="2" x2="10" y2="4"/><line x1="14" y1="2" x2="14" y2="4"/>',
@@ -34,12 +31,13 @@ const iconPaths: Record<string, string> = {
 ---
 
 <div class="bad-ideas-container" id="bad-ideas-container">
-  <div class="bad-ideas-grid" id="bad-ideas-grid">
+  <p class="bi-sr" id="bad-ideas-status" aria-live="polite">Bad ideas. Activate a card to drop the pile.</p>
+  <div class="bad-ideas-grid" id="bad-ideas-grid" role="group" aria-describedby="bad-ideas-status">
     {badIdeas.map((idea) => (
-      <div class="bi-card">
+      <button type="button" class="bi-card" aria-label={idea.label}>
         <div class="bi-card-inner">
           <div class="bi-card-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" set:html={iconPaths[idea.icon]} />
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" set:html={iconPaths[idea.icon]} />
           </div>
           <div class="bi-card-lines">
             <div class="bi-card-line"></div>
@@ -47,7 +45,7 @@ const iconPaths: Record<string, string> = {
             <div class="bi-card-line"></div>
           </div>
         </div>
-      </div>
+      </button>
     ))}
   </div>
 </div>
@@ -56,126 +54,658 @@ const iconPaths: Record<string, string> = {
 (function() {
   var container = document.getElementById('bad-ideas-container');
   var grid = document.getElementById('bad-ideas-grid');
-  if (!container || !grid) return;
-  var cards = grid.querySelectorAll('.bi-card');
-  var collapsed = false;
-  var matterLoading = false;
+  var statusEl = document.getElementById('bad-ideas-status');
+  if (!container || !grid || container.dataset.biReady) return;
+  container.dataset.biReady = '1';
+
+  var cards = Array.prototype.slice.call(grid.querySelectorAll('.bi-card'));
+  var motion = window.matchMedia('(prefers-reduced-motion: reduce)');
+  var MATTER_SRC = 'https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.20.0/matter.min.js';
+
+  var engine = null;
+  var runner = null;
+  var running = false;
+  var live = false;
+  var onScreen = true;
+  var boundsW = 0;
+  var boundsH = 0;
+  var walls = [];
+  var pairs = [];
+  var bootQueue = [];
+  var matterState = 'idle';
+  var gesture = null;
+  var samples = [];
+  var ignoreClick = false;
+
+  function calm() { return motion.matches; }
+
+  function setStatus(text) {
+    if (statusEl) statusEl.textContent = text;
+  }
+
+  function pairForEl(el) {
+    for (var i = 0; i < pairs.length; i++) if (pairs[i].el === el) return pairs[i];
+    return null;
+  }
+
+  function pairForBody(body) {
+    for (var i = 0; i < pairs.length; i++) if (pairs[i].body === body) return pairs[i];
+    return null;
+  }
 
   function loadMatter() {
-    if (window.Matter) return;
-    if (matterLoading) return;
-    matterLoading = true;
+    if (calm()) return;
+    if (window.Matter) {
+      matterState = 'ready';
+      onMatterReady();
+      return;
+    }
+    if (matterState === 'loading') return;
+    matterState = 'loading';
     var el = document.createElement('script');
-    el.src = 'https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.20.0/matter.min.js';
-    el.onload = function() { triggerCollapse(); };
-    el.onerror = function() { matterLoading = false; };
+    el.src = MATTER_SRC;
+    el.async = true;
+    el.onload = function() {
+      matterState = 'ready';
+      onMatterReady();
+    };
+    el.onerror = function() {
+      matterState = 'idle';
+      bootQueue.length = 0;
+    };
     document.head.appendChild(el);
   }
 
-  function triggerCollapse() {
-    if (collapsed) return;
+  function onMatterReady() {
+    if (calm() || !window.Matter) {
+      bootQueue.length = 0;
+      return;
+    }
+    if (!bootQueue.length) return;
+    if (!live) buildWorld();
+    var queued = bootQueue.splice(0, bootQueue.length);
+    for (var i = 0; i < queued.length; i++) queued[i]();
+  }
+
+  function ensureWorld(done) {
+    if (calm()) return;
+    var task = done || function() {};
     if (!window.Matter) {
+      bootQueue.push(task);
       loadMatter();
       return;
     }
-    collapsed = true;
-
-    var Engine = Matter.Engine,
-        Runner = Matter.Runner,
-        Bodies = Matter.Bodies,
-        Composite = Matter.Composite;
-
-    var containerRect = container.getBoundingClientRect();
-
-    // 1. Snapshot each card's position while still in CSS grid
-    var snapshots = [];
-    cards.forEach(function(card) {
-      var rect = card.getBoundingClientRect();
-      snapshots.push({
-        el: card,
-        x: rect.left - containerRect.left + rect.width / 2,
-        y: rect.top - containerRect.top + rect.height / 2,
-        w: rect.width,
-        h: rect.height
-      });
-    });
-
-    // 2. Set fixed dimensions for physics container
-    var gridH = grid.offsetHeight;
-    var gridW = grid.offsetWidth;
-    var collapseH = gridH + 80;
-    grid.classList.add('collapsed');
-    grid.style.height = collapseH + 'px';
-    grid.style.width = gridW + 'px';
-
-    // 3. Position cards absolutely at their snapshot positions
-    snapshots.forEach(function(s) {
-      s.el.style.position = 'absolute';
-      s.el.style.width = s.w + 'px';
-      s.el.style.left = '0';
-      s.el.style.top = '0';
-      s.el.style.transform = 'translate(' + (s.x - s.w / 2) + 'px, ' + (s.y - s.h / 2) + 'px)';
-      s.el.style.cursor = 'default';
-      s.el.style.pointerEvents = 'none';
-    });
-
-    // 4. Create Matter.js world
-    var engine = Engine.create({ gravity: { x: 0, y: 1.5 } });
-    var wallT = 40;
-    var walls = [
-      Bodies.rectangle(gridW / 2, collapseH + wallT / 2, gridW + 100, wallT, { isStatic: true, friction: 0.8 }),
-      Bodies.rectangle(-wallT / 2, collapseH / 2, wallT, collapseH * 2, { isStatic: true, friction: 0.3 }),
-      Bodies.rectangle(gridW + wallT / 2, collapseH / 2, wallT, collapseH * 2, { isStatic: true, friction: 0.3 }),
-    ];
-    Composite.add(engine.world, walls);
-
-    // 5. Create rigid bodies for each card
-    var bodyPairs = [];
-    snapshots.forEach(function(s) {
-      var angle = (Math.random() - 0.5) * 0.15;
-      var body = Bodies.rectangle(s.x, s.y, s.w, s.h, {
-        friction: 0.5,
-        restitution: 0.1,
-        density: 0.003,
-        angle: angle,
-        chamfer: { radius: 2 }
-      });
-      Composite.add(engine.world, body);
-      bodyPairs.push({ el: s.el, body: body, w: s.w, h: s.h });
-    });
-
-    // 6. Run physics and sync HTML positions each frame
-    var runner = Runner.create();
-    Runner.run(runner, engine);
-
-    var frameCount = 0;
-    function sync() {
-      frameCount++;
-      var allSleeping = true;
-
-      for (var i = 0; i < bodyPairs.length; i++) {
-        var bp = bodyPairs[i];
-        var pos = bp.body.position;
-        var deg = bp.body.angle * (180 / Math.PI);
-        bp.el.style.transform =
-          'translate(' + (pos.x - bp.w / 2) + 'px, ' +
-          (pos.y - bp.h / 2) + 'px) rotate(' + deg + 'deg)';
-        if (bp.body.speed > 0.1) allSleeping = false;
-      }
-
-      // Stop engine once cards settle or after ~5 seconds
-      if ((allSleeping && frameCount > 120) || frameCount > 300) {
-        Runner.stop(runner);
-        return;
-      }
-      requestAnimationFrame(sync);
-    }
-    sync();
+    if (!live) buildWorld();
+    task();
   }
 
-  // Any card click triggers the collapse
-  cards.forEach(function(card) {
-    card.addEventListener('click', triggerCollapse);
+  function clientToWorld(clientX, clientY) {
+    var rect = grid.getBoundingClientRect();
+    return { x: clientX - rect.left, y: clientY - rect.top };
+  }
+
+  function makeWalls(w, h) {
+    var M = window.Matter;
+    var t = 180;
+    var opts = { isStatic: true, restitution: 0.82, friction: 0.04, frictionStatic: 0.02 };
+    return [
+      M.Bodies.rectangle(w / 2, h + t / 2, w + t * 2, t, opts),
+      M.Bodies.rectangle(w / 2, -t / 2, w + t * 2, t, opts),
+      M.Bodies.rectangle(-t / 2, h / 2, t, h + t * 2, opts),
+      M.Bodies.rectangle(w + t / 2, h / 2, t, h + t * 2, opts)
+    ];
+  }
+
+  function replaceWalls() {
+    var M = window.Matter;
+    if (!engine) return;
+    for (var i = 0; i < walls.length; i++) M.Composite.remove(engine.world, walls[i]);
+    walls = makeWalls(boundsW, boundsH);
+    M.Composite.add(engine.world, walls);
+  }
+
+  function capBody(body) {
+    var M = window.Matter;
+    var maxV = 24;
+    var sp = Math.hypot(body.velocity.x, body.velocity.y);
+    if (sp > maxV) {
+      var k = maxV / sp;
+      M.Body.setVelocity(body, { x: body.velocity.x * k, y: body.velocity.y * k });
+    }
+    var maxA = 0.4;
+    if (body.angularVelocity > maxA) M.Body.setAngularVelocity(body, maxA);
+    else if (body.angularVelocity < -maxA) M.Body.setAngularVelocity(body, -maxA);
+  }
+
+  function containPair(pair) {
+    var body = pair.body;
+    var x = body.position.x;
+    var y = body.position.y;
+    if (x > 1 && x < boundsW - 1 && y > 1 && y < boundsH - 1) return;
+    var M = window.Matter;
+    var hw = Math.min(pair.w / 2, boundsW / 2 - 2);
+    var hh = Math.min(pair.h / 2, boundsH / 2 - 2);
+    var nx = Math.max(hw, Math.min(boundsW - hw, x));
+    var ny = Math.max(hh, Math.min(boundsH - hh, y));
+    var vx = body.velocity.x;
+    var vy = body.velocity.y;
+    if (nx !== x) vx = (nx > x ? Math.abs(vx) : -Math.abs(vx)) * 0.72;
+    if (ny !== y) vy = (ny > y ? Math.abs(vy) : -Math.abs(vy)) * 0.72;
+    M.Body.setPosition(body, { x: nx, y: ny });
+    M.Body.setVelocity(body, { x: vx, y: vy });
+    pair.impact = Math.max(pair.impact, 0.45);
+    pair.still = 0;
+  }
+
+  function fitBounds() {
+    if (!engine || !live) return;
+    var M = window.Matter;
+    var nextW = container.clientWidth;
+    if (nextW < 40 || boundsH < 40) return;
+    if (Math.abs(nextW - boundsW) < 0.5) return;
+    boundsW = nextW;
+    grid.style.width = boundsW + 'px';
+    grid.style.height = boundsH + 'px';
+    replaceWalls();
+    for (var i = 0; i < pairs.length; i++) {
+      var pair = pairs[i];
+      var maxW = Math.max(48, boundsW - 10);
+      if (pair.w > maxW) {
+        var scale = maxW / pair.w;
+        M.Body.scale(pair.body, scale, scale);
+        pair.w *= scale;
+        pair.h *= scale;
+        pair.el.style.width = pair.w + 'px';
+        pair.el.style.height = pair.h + 'px';
+      }
+      containPair(pair);
+    }
+  }
+
+  function spring(cur, vel, target) {
+    vel = (vel + (target - cur) * 0.14) * 0.64;
+    return { cur: cur + vel, vel: vel };
+  }
+
+  function paintPair(pair) {
+    var body = pair.body;
+    var speed = Math.hypot(body.velocity.x, body.velocity.y);
+    var stretch = Math.min(speed * 0.028, 0.34);
+    var targetX = 1 + stretch;
+    var targetY = Math.max(0.72, 1 - stretch * 0.85);
+    var liftTarget = 0;
+
+    if (pair.held) {
+      targetX = 1.18;
+      targetY = 0.8;
+    } else if (pair.impact > 0.05) {
+      targetX = 1 + pair.impact * 0.42;
+      targetY = Math.max(0.66, 1 - pair.impact * 0.32);
+    } else if (pair.hot && !gesture && speed < 0.8) {
+      targetX = 1.07;
+      targetY = 1.07;
+      liftTarget = 8;
+    }
+
+    pair.impact *= 0.93;
+    var sx = spring(pair.sx, pair.svx, targetX);
+    var sy = spring(pair.sy, pair.svy, targetY);
+    var lift = spring(pair.lift, pair.liftV, liftTarget);
+    pair.sx = sx.cur;
+    pair.svx = sx.vel;
+    pair.sy = sy.cur;
+    pair.svy = sy.vel;
+    pair.lift = lift.cur;
+    pair.liftV = lift.vel;
+
+    if (!pair.held && speed < 0.2 && Math.abs(pair.sx - 1) < 0.008) pair.sx = 1;
+    if (!pair.held && speed < 0.2 && Math.abs(pair.sy - 1) < 0.008) pair.sy = 1;
+
+    var x = body.position.x - pair.w / 2;
+    var y = body.position.y - pair.h / 2 - pair.lift;
+    var bodyDeg = body.angle * (180 / Math.PI);
+    var transform;
+    if (!pair.held && speed > 1.6 && pair.impact < 0.35) {
+      var velDeg = Math.atan2(body.velocity.y, body.velocity.x) * (180 / Math.PI);
+      transform = 'translate(' + x.toFixed(2) + 'px,' + y.toFixed(2) + 'px) rotate(' + velDeg.toFixed(2) + 'deg) scale(' + pair.sx.toFixed(3) + ',' + pair.sy.toFixed(3) + ') rotate(' + (bodyDeg - velDeg).toFixed(2) + 'deg)';
+    } else {
+      transform = 'translate(' + x.toFixed(2) + 'px,' + y.toFixed(2) + 'px) rotate(' + bodyDeg.toFixed(2) + 'deg) scale(' + pair.sx.toFixed(3) + ',' + pair.sy.toFixed(3) + ')';
+    }
+    pair.el.style.transform = transform;
+    pair.el.style.zIndex = pair.held ? '6' : String(2 + Math.round(body.position.y * 0.05));
+  }
+
+  function settlePair(pair) {
+    if (pair.held) {
+      pair.still = 0;
+      return;
+    }
+    var body = pair.body;
+    if (body.speed < 0.12 && Math.abs(body.angularVelocity) < 0.012) {
+      pair.still += 1;
+      if (pair.still > 70 && !body.isSleeping) {
+        window.Matter.Sleeping.set(body, true);
+        window.Matter.Body.setVelocity(body, { x: 0, y: 0 });
+        window.Matter.Body.setAngularVelocity(body, 0);
+      }
+    } else {
+      pair.still = 0;
+    }
+  }
+
+  function isSettled() {
+    if (gesture && gesture.dragging) return false;
+    for (var i = 0; i < pairs.length; i++) {
+      var pair = pairs[i];
+      if (pair.held) return false;
+      if (!pair.body.isSleeping && (pair.body.speed > 0.12 || Math.abs(pair.body.angularVelocity) > 0.012)) return false;
+      if (Math.abs(pair.sx - 1) > 0.012 || Math.abs(pair.sy - 1) > 0.012) return false;
+      if (Math.abs(pair.lift) > 0.4) return false;
+    }
+    return pairs.length > 0;
+  }
+
+  function step() {
+    if (!live) return;
+    for (var i = 0; i < pairs.length; i++) {
+      capBody(pairs[i].body);
+      containPair(pairs[i]);
+      settlePair(pairs[i]);
+      paintPair(pairs[i]);
+    }
+    if (isSettled()) stopRunner();
+  }
+
+  function startRunner() {
+    if (!engine || !runner || running || calm() || document.hidden || !onScreen) return;
+    running = true;
+    window.Matter.Runner.run(runner, engine);
+  }
+
+  function stopRunner() {
+    if (runner && running) window.Matter.Runner.stop(runner);
+    running = false;
+  }
+
+  function buildWorld() {
+    if (live || calm() || !window.Matter) return;
+    var M = window.Matter;
+    boundsW = grid.offsetWidth;
+    boundsH = grid.offsetHeight;
+    if (boundsW < 40 || boundsH < 40) return;
+
+    var shots = [];
+    for (var i = 0; i < cards.length; i++) {
+      var card = cards[i];
+      var w = card.offsetWidth;
+      var h = card.offsetHeight;
+      shots.push({
+        el: card,
+        x: card.offsetLeft + w / 2,
+        y: card.offsetTop + h / 2,
+        w: w,
+        h: h
+      });
+    }
+
+    live = true;
+    grid.classList.add('collapsed');
+    grid.style.width = boundsW + 'px';
+    grid.style.height = boundsH + 'px';
+
+    engine = M.Engine.create({
+      gravity: { x: 0, y: 1.35, scale: 0.001 },
+      enableSleeping: true,
+      positionIterations: 12,
+      velocityIterations: 8,
+      constraintIterations: 4
+    });
+    runner = M.Runner.create();
+    walls = makeWalls(boundsW, boundsH);
+    M.Composite.add(engine.world, walls);
+
+    var heldEl = gesture && gesture.dragging ? gesture.card : null;
+    pairs = [];
+    for (var s = 0; s < shots.length; s++) {
+      var shot = shots[s];
+      var held = shot.el === heldEl;
+      var body = M.Bodies.rectangle(shot.x, shot.y, shot.w, shot.h, {
+        restitution: 0.76,
+        friction: 0.045,
+        frictionStatic: 0.15,
+        frictionAir: 0.012,
+        density: 0.0011,
+        chamfer: { radius: Math.min(4, shot.h / 5) },
+        angle: held ? 0 : (Math.random() - 0.5) * 0.2,
+        sleepThreshold: 90
+      });
+      M.Composite.add(engine.world, body);
+      if (!held) {
+        M.Body.setVelocity(body, {
+          x: (Math.random() - 0.5) * 10,
+          y: 1 + Math.random() * 2.5
+        });
+        M.Body.setAngularVelocity(body, (Math.random() - 0.5) * 0.22);
+      }
+      shot.el.style.position = 'absolute';
+      shot.el.style.left = '0';
+      shot.el.style.top = '0';
+      shot.el.style.width = shot.w + 'px';
+      shot.el.style.height = shot.h + 'px';
+      shot.el.style.margin = '0';
+      var pair = {
+        el: shot.el,
+        body: body,
+        w: shot.w,
+        h: shot.h,
+        sx: 1,
+        sy: 1,
+        svx: 0,
+        svy: 0,
+        lift: 0,
+        liftV: 0,
+        impact: held ? 0.45 : 0.85,
+        held: false,
+        hot: false,
+        still: 0
+      };
+      pairs.push(pair);
+      paintPair(pair);
+    }
+
+    M.Events.on(engine, 'afterUpdate', step);
+    M.Events.on(engine, 'collisionStart', function(event) {
+      var list = event.pairs;
+      for (var n = 0; n < list.length; n++) {
+        var hit = list[n];
+        var rel = Math.hypot(
+          hit.bodyA.velocity.x - hit.bodyB.velocity.x,
+          hit.bodyA.velocity.y - hit.bodyB.velocity.y
+        );
+        if (rel < 1.6) continue;
+        var mag = Math.min(rel / 11, 1);
+        var a = pairForBody(hit.bodyA);
+        var b = pairForBody(hit.bodyB);
+        if (a && !a.held) { a.impact = Math.max(a.impact, mag); a.still = 0; }
+        if (b && !b.held) { b.impact = Math.max(b.impact, mag); b.still = 0; }
+      }
+    });
+
+    setStatus('The cards are loose. Drag to throw them. Arrow keys toss the focused card.');
+    startRunner();
+  }
+
+  function noteSample(clientX, clientY) {
+    var now = performance.now();
+    samples.push({ x: clientX, y: clientY, t: now });
+    while (samples.length > 1 && now - samples[0].t > 90) samples.shift();
+  }
+
+  function flickVelocity() {
+    if (samples.length < 2) return { x: 0, y: 0 };
+    var a = samples[0];
+    var b = samples[samples.length - 1];
+    var dt = (b.t - a.t) / (1000 / 60);
+    if (dt < 0.45) dt = 0.45;
+    return { x: (b.x - a.x) / dt, y: (b.y - a.y) / dt };
+  }
+
+  function attachConstraint(pair, clientX, clientY) {
+    var M = window.Matter;
+    var point = clientToWorld(clientX, clientY);
+    var body = pair.body;
+    M.Sleeping.set(body, false);
+    M.Body.setVelocity(body, { x: 0, y: 0 });
+    M.Body.setAngularVelocity(body, 0);
+    var constraint = M.Constraint.create({
+      pointA: { x: point.x, y: point.y },
+      bodyB: body,
+      pointB: { x: point.x - body.position.x, y: point.y - body.position.y },
+      angleB: body.angle,
+      length: 0.01,
+      stiffness: 0.62,
+      damping: 0.28,
+      angularStiffness: 0.84
+    });
+    M.Composite.add(engine.world, constraint);
+    pair.grabX = point.x - body.position.x;
+    pair.grabY = point.y - body.position.y;
+    pair.held = true;
+    pair.still = 0;
+    pair.el.classList.add('is-held');
+    gesture.constraint = constraint;
+    gesture.pair = pair;
+    startRunner();
+  }
+
+  function moveConstraint(clientX, clientY) {
+    if (!gesture || !gesture.constraint) return;
+    var point = clientToWorld(clientX, clientY);
+    gesture.constraint.pointA.x = point.x;
+    gesture.constraint.pointA.y = point.y;
+    if (gesture.pair) window.Matter.Sleeping.set(gesture.pair.body, false);
+  }
+
+  function releaseConstraint() {
+    if (!gesture) return;
+    var pair = gesture.pair;
+    var constraint = gesture.constraint;
+    gesture.constraint = null;
+    gesture.pair = null;
+    if (constraint && engine) window.Matter.Composite.remove(engine.world, constraint);
+    if (!pair) return;
+    pair.held = false;
+    pair.el.classList.remove('is-held');
+    pair.still = 0;
+    var flick = flickVelocity();
+    var sp = Math.hypot(flick.x, flick.y);
+    if (sp > 0.45) {
+      var v = pair.body.velocity;
+      var spin = ((pair.grabX || 0) * flick.y - (pair.grabY || 0) * flick.x) * 0.003;
+      window.Matter.Body.setVelocity(pair.body, {
+        x: v.x * 0.25 + flick.x * 1.15,
+        y: v.y * 0.25 + flick.y * 1.15
+      });
+      window.Matter.Body.setAngularVelocity(pair.body, pair.body.angularVelocity * 0.4 + spin);
+    }
+    capBody(pair.body);
+    window.Matter.Sleeping.set(pair.body, false);
+    samples.length = 0;
+    startRunner();
+  }
+
+  function beginDrag(g, clientX, clientY) {
+    g.dragging = true;
+    samples.length = 0;
+    noteSample(clientX, clientY);
+    try { g.card.setPointerCapture(g.id); } catch (err) { /* already released */ }
+    ensureWorld(function() {
+      if (!gesture || gesture !== g || !g.dragging || !engine) return;
+      var pair = pairForEl(g.card);
+      if (!pair) return;
+      attachConstraint(pair, clientX, clientY);
+    });
+  }
+
+  function onPointerDown(e) {
+    if (calm() || e.button > 0 || gesture) return;
+    ignoreClick = false;
+    gesture = {
+      id: e.pointerId,
+      type: e.pointerType || 'mouse',
+      card: e.currentTarget,
+      x: e.clientX,
+      y: e.clientY,
+      t: performance.now(),
+      dragging: false,
+      constraint: null,
+      pair: null
+    };
+    if (gesture.type !== 'touch' || live) beginDrag(gesture, e.clientX, e.clientY);
+  }
+
+  function onPointerMove(e) {
+    if (!gesture || e.pointerId !== gesture.id) return;
+    if (!gesture.dragging) {
+      var dx = e.clientX - gesture.x;
+      var dy = e.clientY - gesture.y;
+      var dist = Math.hypot(dx, dy);
+      var dt = performance.now() - gesture.t;
+      if (dist < 8 && dt < 200) return;
+    if (dt < 260 && Math.abs(dy) > 12 && Math.abs(dy) > Math.abs(dx) * 1.2) {
+      ignoreClick = true;
+      gesture = null;
+      return;
+    }
+      beginDrag(gesture, e.clientX, e.clientY);
+    }
+    noteSample(e.clientX, e.clientY);
+    moveConstraint(e.clientX, e.clientY);
+  }
+
+  function onPointerUp(e) {
+    if (!gesture || e.pointerId !== gesture.id) return;
+    var g = gesture;
+    if (g.dragging) {
+      g.dragging = false;
+      releaseConstraint();
+      gesture = null;
+      return;
+    }
+    gesture = null;
+    if (g.type === 'touch' && !live) ensureWorld(null);
+  }
+
+  function onKeyDown(e) {
+    if (calm()) return;
+    var dir = null;
+    if (e.key === 'ArrowLeft') dir = [-1, 0];
+    else if (e.key === 'ArrowRight') dir = [1, 0];
+    else if (e.key === 'ArrowUp') dir = [0, -1];
+    else if (e.key === 'ArrowDown') dir = [0, 1];
+    else if ((e.key === 'Enter' || e.key === ' ') && live) dir = [(Math.random() - 0.5) * 0.6, -1];
+    else return;
+    if (!live) return;
+    e.preventDefault();
+    var pair = pairForEl(e.currentTarget);
+    if (!pair) return;
+    window.Matter.Sleeping.set(pair.body, false);
+    window.Matter.Body.setVelocity(pair.body, {
+      x: pair.body.velocity.x + dir[0] * 8,
+      y: pair.body.velocity.y + dir[1] * 8
+    });
+    window.Matter.Body.setAngularVelocity(pair.body, pair.body.angularVelocity + dir[0] * 0.1);
+    pair.impact = Math.max(pair.impact, 0.4);
+    pair.still = 0;
+    startRunner();
+  }
+
+  function onClick() {
+    if (ignoreClick) {
+      ignoreClick = false;
+      return;
+    }
+    if (calm() || live) return;
+    ensureWorld(null);
+  }
+
+  function onEnter(e) {
+    var pair = pairForEl(e.currentTarget);
+    if (!pair) return;
+    pair.hot = true;
+    if (live) startRunner();
+  }
+
+  function onLeave(e) {
+    var pair = pairForEl(e.currentTarget);
+    if (!pair) return;
+    pair.hot = false;
+    if (live) startRunner();
+  }
+
+  function clearCardStyles(card) {
+    card.style.position = '';
+    card.style.left = '';
+    card.style.top = '';
+    card.style.width = '';
+    card.style.height = '';
+    card.style.margin = '';
+    card.style.transform = '';
+    card.style.zIndex = '';
+    card.classList.remove('is-held');
+  }
+
+  function teardown() {
+    live = false;
+    stopRunner();
+    gesture = null;
+    samples.length = 0;
+    bootQueue.length = 0;
+    if (engine && window.Matter) {
+      window.Matter.World.clear(engine.world, false);
+      window.Matter.Engine.clear(engine);
+    }
+    engine = null;
+    runner = null;
+    walls = [];
+    pairs = [];
+    boundsW = 0;
+    boundsH = 0;
+    grid.classList.remove('collapsed');
+    grid.style.width = '';
+    grid.style.height = '';
+    for (var i = 0; i < cards.length; i++) clearCardStyles(cards[i]);
+  }
+
+  for (var c = 0; c < cards.length; c++) {
+    cards[c].addEventListener('pointerdown', onPointerDown);
+    cards[c].addEventListener('keydown', onKeyDown);
+    cards[c].addEventListener('click', onClick);
+    cards[c].addEventListener('pointerenter', onEnter);
+    cards[c].addEventListener('pointerleave', onLeave);
+  }
+
+  window.addEventListener('pointermove', onPointerMove);
+  window.addEventListener('pointerup', onPointerUp);
+  window.addEventListener('pointercancel', onPointerUp);
+
+  container.addEventListener('touchmove', function(e) {
+    if (gesture && gesture.dragging) e.preventDefault();
+  }, { passive: false });
+
+  window.addEventListener('resize', fitBounds);
+  document.addEventListener('visibilitychange', function() {
+    if (document.hidden) stopRunner();
+    else if (onScreen && engine && !isSettled()) startRunner();
   });
+
+  if ('ResizeObserver' in window) {
+    var resizeObserver = new ResizeObserver(function() {
+      if (live) fitBounds();
+    });
+    resizeObserver.observe(container);
+  }
+
+  var watcher = new IntersectionObserver(function(entries) {
+    onScreen = !!entries[0] && entries[0].isIntersecting;
+    if (calm()) return;
+    if (onScreen && matterState === 'idle') loadMatter();
+    if (!engine) return;
+    if (!onScreen) stopRunner();
+    else if (!isSettled()) startRunner();
+  }, { rootMargin: '240px 0px', threshold: 0 });
+  watcher.observe(container);
+
+  motion.addEventListener('change', function() {
+    if (motion.matches) {
+      teardown();
+      setStatus('Bad ideas, at rest.');
+    } else if (!live) {
+      setStatus('Bad ideas. Activate a card to drop the pile.');
+      if (onScreen) loadMatter();
+    }
+  });
+
+  if (calm()) setStatus('Bad ideas, at rest.');
 })();
 </script>
