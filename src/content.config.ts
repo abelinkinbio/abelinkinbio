@@ -25,12 +25,14 @@ const livedin = defineCollection({
     category: z.enum([
       'coffee', 'dinner', 'drinks', 'bbq', 'pizza',
       'tacos', 'ramen', 'brunch', 'bar', 'bakery',
-      'dessert', 'lunch', 'sushi', 'burger', 'other'
+      'dessert', 'lunch', 'sushi', 'burger', 'misc', 'other'
     ]).default('other'),
     coordinates: z.object({
       lat: z.number(),
       lng: z.number(),
     }).optional(),
+    googleMaps: z.string().url().optional(),
+    appleMaps: z.string().url().optional(),
     tags: z.array(z.string()).default([]),
     draft: z.boolean().default(false),
   }),
