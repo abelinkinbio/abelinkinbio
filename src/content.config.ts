@@ -8,6 +8,9 @@ const blog = defineCollection({
     description: z.string(),
     date: z.coerce.date(),
     tags: z.array(z.string()).default([]),
+    // Cover or hero for link previews. Site path or absolute URL.
+    // Pages without one use public/og.png.
+    image: z.string().optional(),
     draft: z.boolean().default(false),
   }),
 });

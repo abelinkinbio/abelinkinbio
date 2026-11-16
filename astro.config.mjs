@@ -14,7 +14,7 @@ export default defineConfig({
   // This is the fastest, simplest mode — no server needed.
   output: 'static',
 
-  // Public origin (Astro.site). This does not generate a sitemap,
-  // canonical URLs, or Open Graph metadata.
+  // Public origin (Astro.site). BaseLayout uses this for absolute
+  // canonical and Open Graph URLs. This does not generate a sitemap.
   site: 'https://abelinkinbio.com',
 });

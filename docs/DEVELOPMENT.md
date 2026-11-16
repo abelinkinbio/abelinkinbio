@@ -28,7 +28,7 @@ Wrangler is a devDependency. Log in once with `npx wrangler login`, then `npm ru
 | `/livedin` | `src/pages/livedin/index.astro` |
 | `/404` | `src/pages/404.astro` |
 
-`src/layouts/BaseLayout.astro` wraps every page (nav: Home, Bio, Playground, Field Notes, City Guides). Home also uses `src/components/Globe.astro` and `src/components/BadIdeas.astro`. The favicon is `public/favicon.svg`.
+`src/layouts/BaseLayout.astro` wraps every page (nav: Home, Bio, Playground, Field Notes, City Guides) and emits the canonical link plus Open Graph and Twitter card tags. Home also uses `src/components/Globe.astro` and `src/components/BadIdeas.astro`. The favicon is `public/favicon.svg`. Link previews use a page's cover image when it has one, and `public/og.png` (1200×630) otherwise.
 
 `/bio` is the markup in `src/pages/bio.astro`. There is no bio collection.
 
@@ -42,6 +42,7 @@ Schemas live in `src/content.config.ts`. `draft: true` is omitted from every pag
 
 - `title`, `description`, `date` (required; `date` sorts the list)
 - `tags`: string array, default `[]`
+- `image`: optional cover. A site path (`/images/a.png`) or an absolute URL. Link previews use `public/og.png` when it is omitted
 - `draft`: boolean, default `false`
 
 **Playground** — `src/content/playground/<name>.md`. The homepage shows at most two non-draft entries with `pinned: true`.

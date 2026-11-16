@@ -25,7 +25,7 @@ const wordCount = post.body ? post.body.split(/\s+/).length : 0;
 const readingTime = Math.max(1, Math.ceil(wordCount / 200));
 ---
 
-<BaseLayout title={post.data.title} description={post.data.description} activeNav="blog">
+<BaseLayout title={post.data.title} description={post.data.description} image={post.data.image} type="article" activeNav="blog">
   <article>
     <!-- Post header -->
     <div class="post-header">
