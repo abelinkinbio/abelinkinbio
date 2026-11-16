@@ -4,7 +4,7 @@ description: "Snag an obligatory pastel de nata before leaving town"
 date: 2021-06-13
 emoji: "☕️"
 category: "misc"
-tags: ["misc", "coffee", "pastries", "delivery"]
+tags: ["coffee", "pastries", "delivery"]
 coordinates:
   lat: 38.7108
   lng: -9.1441

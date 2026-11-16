@@ -3,8 +3,8 @@ title: "Skizzo"
 description: "Go-to neighborhood date-nite spot"
 date: 2025-01-04
 emoji: "🍷"
-category: "dinner"
-tags: ["late-nite", "date-nite", "drinks", "lapa", "top-10"]
+category: "date-nite"
+tags: ["late-nite", "lapa", "top-10"]
 coordinates:
   lat: 38.7086
   lng: -9.157

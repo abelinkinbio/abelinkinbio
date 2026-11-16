@@ -3,7 +3,7 @@ title: "Lupita"
 description: "Pizza by the slice"
 date: 2021-06-15
 emoji: "🍕"
-category: "pizza"
+category: "late-nite"
 tags: ["pizza", "delivery", "top-10"]
 coordinates:
   lat: 38.7083

@@ -3,7 +3,7 @@ title: "Ramen Tatsu-ya"
 description: "Take a long work lunch"
 date: 2021-06-15
 emoji: "🍜"
-category: "ramen"
+category: "dinner"
 tags: ["ramen", "east"]
 coordinates:
   lat: 30.3612

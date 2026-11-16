@@ -3,7 +3,7 @@ title: "Daikaya"
 description: "Japanese comfort food and Sapporo"
 date: 2021-06-13
 emoji: "🍜"
-category: "ramen"
+category: "dinner"
 tags: ["ramen", "downtown"]
 coordinates:
   lat: 38.8986

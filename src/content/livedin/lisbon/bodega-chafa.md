@@ -4,7 +4,7 @@ description: "Mezcal bar with tacos; breakfast burritos for lunch"
 date: 2026-11-16
 emoji: "🌮"
 category: "misc"
-tags: ["misc", "são-bento"]
+tags: ["são-bento"]
 coordinates:
   lat: 38.710778
   lng: -9.151778

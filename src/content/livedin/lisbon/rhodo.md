@@ -4,7 +4,7 @@ description: "When you're feeling homesick"
 date: 2021-06-13
 emoji: "🥯"
 category: "misc"
-tags: ["misc", "breakfast", "delivery", "american"]
+tags: ["delivery", "american"]
 coordinates:
   lat: 38.7091
   lng: -9.1505

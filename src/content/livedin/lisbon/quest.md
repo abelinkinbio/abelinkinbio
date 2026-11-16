@@ -3,8 +3,8 @@ title: "Quest"
 description: "Breakfast"
 date: 2026-11-16
 emoji: "🥞"
-category: "brunch"
-tags: ["breakfast"]
+category: "breakfast"
+tags: []
 coordinates:
   lat: 38.708506
   lng: -9.151475

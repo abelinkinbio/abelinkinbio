@@ -3,8 +3,8 @@ title: "TIMS"
 description: "Breakfast"
 date: 2026-11-16
 emoji: "🥞"
-category: "brunch"
-tags: ["breakfast"]
+category: "breakfast"
+tags: []
 coordinates:
   lat: 38.707825
   lng: -9.150365

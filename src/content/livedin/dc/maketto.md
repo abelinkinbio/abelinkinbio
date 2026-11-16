@@ -4,7 +4,7 @@ description: "Best spot to work remote in DC"
 date: 2021-06-13
 emoji: "☕️"
 category: "coffee"
-tags: ["coffee", "h-street"]
+tags: ["h-street"]
 coordinates:
   lat: 38.9
   lng: -76.9867

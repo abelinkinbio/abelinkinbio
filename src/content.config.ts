@@ -23,10 +23,9 @@ const livedin = defineCollection({
     date: z.coerce.date(),
     emoji: z.string().default('📍'),
     category: z.enum([
-      'coffee', 'dinner', 'drinks', 'bbq', 'pizza',
-      'tacos', 'ramen', 'brunch', 'bar', 'bakery',
-      'dessert', 'lunch', 'sushi', 'burger', 'misc', 'other'
-    ]).default('other'),
+      'dinner', 'date-nite', 'late-nite', 'coffee',
+      'breakfast', 'lunch', 'drinks', 'delivery', 'misc',
+    ]).default('misc'),
     coordinates: z.object({
       lat: z.number(),
       lng: z.number(),

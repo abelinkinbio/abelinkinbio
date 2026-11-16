@@ -4,7 +4,7 @@ description: "Greek yogurt"
 date: 2026-11-16
 emoji: "🍦"
 category: "misc"
-tags: ["misc"]
+tags: []
 coordinates:
   lat: 38.716602
   lng: -9.166219
