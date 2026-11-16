@@ -61,7 +61,6 @@ writeFileSync(join(cacheDir, 'livedin-catalog.json'), JSON.stringify(catalog));
     </div>
     <div class="ask-follow" hidden>
       <button class="ask-chip" type="button" data-adjust="closer">too far</button>
-      <button class="ask-chip" type="button" data-adjust="farther">too close</button>
       <button class="ask-chip" type="button" data-adjust="other">something else</button>
     </div>
     <p class="ask-status" role="status"></p>
@@ -183,7 +182,7 @@ writeFileSync(join(cacheDir, 'livedin-catalog.json'), JSON.stringify(catalog));
 
     async function ask(kind) {
       if (inFlight) return;
-      var follow = kind === 'closer' || kind === 'farther' || kind === 'other';
+      var follow = kind === 'closer' || kind === 'other';
       var mood = kind === 'sample' ? SAMPLE : follow ? state.mood : (kind === 'surprise' ? '' : input.value.trim());
       var exclude = follow ? state.exclude.slice() : [];
       if (!follow) state.city = selectedCity();

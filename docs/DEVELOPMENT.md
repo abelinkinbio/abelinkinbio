@@ -36,7 +36,7 @@ Wrangler is a devDependency. Log in once with `npx wrangler login`, then `npm ru
 
 `/bio` is the markup in `src/pages/bio.astro`. There is no bio collection.
 
-`/livedin` is one page: tabs for Lisbon, D.C., and ATX, a Leaflet map (OpenStreetMap tiles), and review cards. There are no `/livedin/[city]` routes and no per-review pages. The ask bar (`src/components/LivedInAsk.astro`) sits under the page title and above the map. It posts the text they typed, the browser's local time, the active city tab, and the referrer path. A city or neighborhood in the text (Lisbon areas, Lisbon, D.C., ATX, Austin) overrides the tab, and a time in the text such as midnight overrides the clock. `too far` and `too close` stay in that city. Playground entries are cards; there are no per-project pages.
+`/livedin` is one page: tabs for Lisbon, D.C., and ATX, a Leaflet map (OpenStreetMap tiles), and review cards. There are no `/livedin/[city]` routes and no per-review pages. The ask bar (`src/components/LivedInAsk.astro`) sits under the page title and above the map. It posts the text they typed, the browser's local time, the active city tab, and the referrer path. A city or neighborhood in the text (Lisbon areas, Lisbon, D.C., ATX, Austin) overrides the tab, and a time in the text such as midnight overrides the clock. `too far` stays in that city. Playground entries are cards; there are no per-project pages.
 
 ## Content
 
