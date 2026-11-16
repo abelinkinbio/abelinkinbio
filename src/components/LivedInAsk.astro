@@ -125,30 +125,6 @@ writeFileSync(join(cacheDir, 'livedin-catalog.json'), JSON.stringify(catalog));
       return anchor;
     }
 
-    function revealPlace(city, name) {
-      var tab = document.querySelector('.city-tab[data-city="' + CSS.escape(city) + '"]');
-      if (tab && !tab.classList.contains('active')) tab.click();
-      var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-      requestAnimationFrame(function () {
-        var panel = document.querySelector('.city-panel[data-city="' + CSS.escape(city) + '"]');
-        if (!panel) return;
-        var all = panel.querySelector('.category-filter[data-category="all"]');
-        if (all && !all.classList.contains('active')) all.click();
-        var cards = panel.querySelectorAll('.review-card');
-        for (var i = 0; i < cards.length; i++) {
-          var title = cards[i].querySelector('.card-title');
-          var label = title && title.textContent ? title.textContent.replace(/\s+/g, ' ').trim() : '';
-          if (label === name || label.endsWith(' ' + name)) {
-            cards[i].classList.remove('hidden');
-            cards[i].style.scrollMarginTop = '5rem';
-            cards[i].style.scrollMarginBottom = '10rem';
-            cards[i].scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'center' });
-            return;
-          }
-        }
-      });
-    }
-
     function selectedCity() {
       var tab = document.querySelector('.city-tab.active');
       return tab ? tab.getAttribute('data-city') : null;
@@ -161,15 +137,7 @@ writeFileSync(join(cacheDir, 'livedin-catalog.json'), JSON.stringify(catalog));
       card.append(title);
       card.append(el('p', 'ask-reason', reason));
 
-      var pageBtn = el('button', 'ask-textbtn', 'on this page');
-      pageBtn.type = 'button';
-      pageBtn.addEventListener('click', function () {
-        revealPlace(place.city, place.name);
-      });
-
       var meta = el('p', 'card-meta ask-meta');
-      meta.append(pageBtn);
-      meta.append(text(' · '));
       meta.append(link(place.mapsUrl, 'Google Maps'));
       meta.append(text(' · '));
       meta.append(link(place.appleMapsUrl, 'Apple Maps'));
@@ -375,22 +343,6 @@ writeFileSync(join(cacheDir, 'livedin-catalog.json'), JSON.stringify(catalog));
   .ask-meta {
     margin-top: var(--space-sm);
     margin-bottom: 0;
-  }
-
-  .ask-textbtn {
-    font-family: var(--font-body);
-    font-size: 0.65rem;
-    color: var(--color-interactive);
-    background: none;
-    border: 0;
-    padding: 0;
-    cursor: pointer;
-    letter-spacing: 0.02em;
-  }
-
-  .ask-textbtn:hover {
-    color: var(--color-text);
-    text-decoration: underline;
   }
 
   .ask-follow {
