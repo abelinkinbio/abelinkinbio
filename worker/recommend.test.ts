@@ -29,7 +29,6 @@ function ask(partial: Partial<AskInput> = {}): AskInput {
     hour: 21,
     weekday: 5,
     city: null,
-    from: null,
     exclude: [],
     adjust: null,
     ...partial,
@@ -150,12 +149,10 @@ test('the sample line is conversation, with tags and no distance', () => {
     mood: SAMPLE,
     hour: 15,
     weekday: 2,
-    from: '/blog/how-i-wind-down',
   });
   const prompt = buildPrompt(selectCandidates(places, input), input);
   assert.match(prompt, /Local time: it's 3pm on a tuesday\./);
   assert.match(prompt, /They wrote: it's midnight and i want a quick bite on my way home to principe real/);
-  assert.match(prompt, /Came from: \/blog\/how-i-wind-down/);
   assert.match(prompt, /tags=late-nite,lapa/);
   assert.match(prompt, /area=Lisbon/);
   assert.equal(prompt.includes('SECRET_BODY_TEXT'), false);
@@ -219,7 +216,7 @@ test('the client card omits tags', () => {
   assert.match(decodeURIComponent(client.place.mapsUrl), /Whisler's, Austin/);
 });
 
-test('parseBody caps mood and drops a bad referrer', () => {
+test('parseBody caps mood and ignores a leftover from field', () => {
   const ok = parseBody({
     mood: '  cozy   spot ',
     time: { hour: 23, weekday: 5 },
@@ -230,7 +227,7 @@ test('parseBody caps mood and drops a bad referrer', () => {
   assert.equal(ok.ok, true);
   if (!ok.ok) return;
   assert.equal(ok.value.mood, 'cozy spot');
-  assert.equal(ok.value.from, null);
+  assert.equal('from' in ok.value, false);
   assert.deepEqual(ok.value.exclude, ['atx/ok']);
 
   const long = parseBody({ mood: 'x'.repeat(241), time: { hour: 1, weekday: 1 } });

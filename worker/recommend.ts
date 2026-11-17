@@ -34,7 +34,6 @@ export type AskInput = {
   hour: number;
   weekday: number;
   city: string | null;
-  from: string | null;
   exclude: string[];
   adjust: Adjust | null;
 };
@@ -140,11 +139,6 @@ export function parseBody(raw: unknown): { ok: true; value: AskInput } | { ok: f
   let city: string | null = null;
   if (typeof body.city === 'string' && CITY_IDS.has(body.city)) city = body.city;
 
-  let from: string | null = null;
-  if (typeof body.from === 'string' && body.from.length <= 200 && /^\/[A-Za-z0-9/_\-.]*$/.test(body.from) && !body.from.includes('..')) {
-    from = body.from;
-  }
-
   const exclude: string[] = [];
   if (body.exclude != null) {
     if (!Array.isArray(body.exclude)) return { ok: false, error: 'exclude must be a list' };
@@ -162,7 +156,7 @@ export function parseBody(raw: unknown): { ok: true; value: AskInput } | { ok: f
     adjust = body.adjust;
   }
 
-  return { ok: true, value: { mood, hour, weekday, city, from, exclude, adjust } };
+  return { ok: true, value: { mood, hour, weekday, city, exclude, adjust } };
 }
 
 export function selectCandidates(places: CatalogPlace[], input: AskInput): CatalogPlace[] {
@@ -194,7 +188,6 @@ export function buildPrompt(candidates: CatalogPlace[], input: AskInput): string
   const city = cityFromText(input.mood, []) ?? input.city;
   if (city) lines.push(`Stay in ${areaName(city)}.`);
   lines.push(input.mood ? `They wrote: ${input.mood}` : 'They wrote: surprise me.');
-  if (input.from) lines.push(`Came from: ${input.from}`);
   if (input.adjust === 'closer') {
     lines.push('Follow-up: that pick felt too far from the area they mentioned. Using area tags, choose a place closer to that area.');
   } else if (input.adjust === 'other') {

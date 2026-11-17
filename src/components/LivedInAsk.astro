@@ -92,20 +92,6 @@ writeFileSync(join(cacheDir, 'livedin-catalog.json'), JSON.stringify(catalog));
       if (busy) setStatus('picking…', false);
     }
 
-    function fromPath() {
-      if (!document.referrer) return null;
-      try {
-        var url = new URL(document.referrer);
-        if (url.origin !== window.location.origin) return null;
-        if (url.pathname.indexOf('..') !== -1) return null;
-        if (!/^\/[A-Za-z0-9/_\-.]*$/.test(url.pathname)) return null;
-        if (url.pathname.length > 200) return null;
-        return url.pathname;
-      } catch (err) {
-        return null;
-      }
-    }
-
     function el(tag, className, text) {
       var node = document.createElement(tag);
       if (className) node.className = className;
@@ -161,8 +147,6 @@ writeFileSync(join(cacheDir, 'livedin-catalog.json'), JSON.stringify(catalog));
         adjust: follow ? kind : null,
         city: state.city,
       };
-      var from = fromPath();
-      if (from) payload.from = from;
 
       setBusy(true);
       try {
