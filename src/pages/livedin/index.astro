@@ -55,10 +55,6 @@ function appleMapsSearchUrl(query: string): string {
   return `https://maps.apple.com/?q=${encodeURIComponent(query)}`;
 }
 
-function osmSearchUrl(query: string): string {
-  return `https://www.openstreetmap.org/search?query=${encodeURIComponent(query)}`;
-}
-
 function placeLinks(
   data: {
     title: string;
@@ -73,7 +69,6 @@ function placeLinks(
     name,
     mapsUrl: data.googleMaps || googleMapsSearchUrl(query),
     appleMapsUrl: data.appleMaps || appleMapsSearchUrl(query),
-    osmUrl: osmSearchUrl(query),
   };
 }
 
@@ -96,7 +91,6 @@ for (const city of cities) {
         category: r.data.category,
         mapsUrl: place.mapsUrl,
         appleMapsUrl: place.appleMapsUrl,
-        osmUrl: place.osmUrl,
       };
     });
 }
@@ -276,7 +270,6 @@ for (const city of cities) {
           + '<div class="map-popup-links">'
           + linkHtml(pin.mapsUrl, 'Google Maps')
           + linkHtml(pin.appleMapsUrl, 'Apple Maps')
-          + linkHtml(pin.osmUrl, 'OpenStreetMap')
           + '</div>'
           + '</div>';
 
