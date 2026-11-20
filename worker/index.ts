@@ -105,7 +105,8 @@ async function askModel(env: Env, prompt: string): Promise<{ id: string; reason:
       max_tokens: 180,
       temperature: 0.4,
     }, {
-      gateway: { id: 'livedin' },
+      gateway: { id: 'livedin', skipCache: true },
+      rejectIfBusy: true,
     }), 12000);
     return parseModelOutput(result);
   } catch (error) {
