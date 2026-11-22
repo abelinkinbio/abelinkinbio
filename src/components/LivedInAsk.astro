@@ -20,7 +20,6 @@ const catalog = reviews
     category: review.data.category,
     tags: review.data.tags,
     city: review.id.split('/')[0],
-    description: review.data.description,
     ...(review.data.googleMaps ? { googleMaps: review.data.googleMaps } : {}),
     ...(review.data.appleMaps ? { appleMaps: review.data.appleMaps } : {}),
   }))
@@ -319,25 +318,11 @@ writeFileSync(join(cacheDir, 'livedin-catalog.json'), JSON.stringify(catalog));
     padding: var(--space-sm) var(--space-md);
   }
 
-  .ask-card-top {
-    display: flex;
-    align-items: center;
-    gap: var(--space-sm);
-    flex-wrap: wrap;
-  }
-
-  .ask-card-top .tag:first-of-type { margin-left: auto; }
-
   .ask-reason {
     margin: var(--space-xs) 0 0;
     font-size: 0.8rem;
     color: var(--color-text);
     overflow-wrap: anywhere;
-  }
-
-  .ask-desc {
-    margin-top: var(--space-xs);
-    margin-bottom: 0;
   }
 
   .ask-meta {
