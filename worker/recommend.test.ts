@@ -213,7 +213,6 @@ test('the client card omits tags', () => {
   const client = toClient(resolved!);
   assert.equal('tags' in client.place, false);
   assert.equal('distanceKm' in client.place, false);
-  assert.equal(client.place.area, 'ATX');
   assert.match(client.place.mapsUrl, /google\.com\/maps/);
   assert.match(client.place.appleMapsUrl, /maps\.apple\.com/);
   assert.match(decodeURIComponent(client.place.mapsUrl), /Whisler's, Austin/);

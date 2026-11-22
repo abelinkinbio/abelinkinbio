@@ -24,7 +24,6 @@ export type CatalogPlace = {
   category: string;
   tags: string[];
   city: string;
-  description: string;
   googleMaps?: string;
   appleMaps?: string;
 };
@@ -99,7 +98,6 @@ export function loadCatalog(raw: unknown): CatalogPlace[] {
       category: row.category,
       tags,
       city: row.city,
-      description: typeof row.description === 'string' ? row.description : '',
       ...(typeof row.googleMaps === 'string' ? { googleMaps: row.googleMaps } : {}),
       ...(typeof row.appleMaps === 'string' ? { appleMaps: row.appleMaps } : {}),
     });
@@ -236,10 +234,6 @@ export function toClient(resolved: Resolved): {
     id: string;
     name: string;
     emoji: string;
-    category: string;
-    area: string;
-    city: string;
-    description: string;
     mapsUrl: string;
     appleMapsUrl: string;
   };
@@ -251,10 +245,6 @@ export function toClient(resolved: Resolved): {
       id: resolved.place.id,
       name: resolved.place.name,
       emoji: resolved.place.emoji,
-      category: resolved.place.category,
-      area: areaName(resolved.place.city),
-      city: resolved.place.city,
-      description: resolved.place.description,
       mapsUrl: links.mapsUrl,
       appleMapsUrl: links.appleMapsUrl,
     },
